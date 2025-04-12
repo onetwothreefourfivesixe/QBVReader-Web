@@ -46,15 +46,19 @@ static/audio/*
 credentials.json
 *.pem
 *.key
+discordpacketreader-*.json
 
-.qodo
-discordpacketreader-35651a57ebb7.json
+# Docker
 Dockerfile*
 .dockerignore
-.qodo
-.vscode
+
+# Environment files
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Other
+.qodo
+.vscode

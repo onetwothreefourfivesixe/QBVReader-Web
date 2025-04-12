@@ -1,0 +1,11 @@
+.qodo
+discordpacketreader-35651a57ebb7.json
+Dockerfile*
+.dockerignore
+.qodo
+.vscode
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local

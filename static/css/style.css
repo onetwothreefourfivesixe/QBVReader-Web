@@ -1,0 +1,1021 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.saved-texts {
+    margin-top: 30px;
+}
+
+.saved-text {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.saved-text h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.saved-text p {
+    margin: 0 0 10px 0;
+    color: #666;
+}
+
+.saved-text small {
+    color: #888;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.saved-text button {
+    background-color: #f44336;
+}
+
+.saved-text button:hover {
+    background-color: #da190b;
+}
+
+/* Audio player styles */
+audio {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+audio::-webkit-media-controls-panel {
+    background-color: #f5f5f5;
+}
+
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-timeline {
+    cursor: pointer;
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Error message */
+.error-message {
+    color: #f44336;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #ffebee;
+    border-radius: 4px;
+    display: none;
+}
+
+/* Add styles for multiselect */
+.input-group select[multiple] {
+    height: 150px;
+    padding: 5px;
+}
+
+.input-group select[multiple] option {
+    padding: 5px;
+}
+
+.input-group select[multiple] option:checked {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Add styles for checkbox groups */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Add styles for the tossup metadata section */
+.tossup-metadata {
+    background-color: #f0f7ff;
+    border-radius: 4px;
+    border: 1px solid #cce0ff;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.tossup-metadata.hidden {
+    display: none;
+}
+
+.set-name {
+    font-style: italic;
+    color: #666;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.answer {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.answer b {
+    font-weight: bold;
+}
+
+.answer u {
+    text-decoration: underline;
+}
+
+.answer b u {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.answer i {
+    font-style: italic;
+}
+
+.answer em {
+    font-style: italic;
+}
+
+.answer strong {
+    font-weight: bold;
+}
+
+.answer sub {
+    vertical-align: sub;
+    font-size: 0.8em;
+}
+
+.answer sup {
+    vertical-align: super;
+    font-size: 0.8em;
+}
+
+.answer a {
+    color: #2196F3;
+    text-decoration: none;
+}
+
+.answer a:hover {
+    text-decoration: underline;
+}
+
+/* Text display styles */
+.text-display {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.text-display.hidden {
+    display: none;
+}
+
+#tossup-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    min-height: 100px;
+}
+
+/* Hide native audio element */
+.hidden {
+    display: none !important;
+}
+
+/* Custom audio controls */
+.custom-audio-controls {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#play-pause-button {
+    min-width: 60px;
+    padding: 8px 12px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#play-pause-button:hover {
+    background-color: #45a049;
+}
+
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: #4CAF50;
+    transition: width 0.1s linear;
+}
+
+.progress-container.hidden {
+    display: none;
+}
+
+/* Toggle switch styles */
+.text-display-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Existing styles */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.input-group select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.audio-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.next-tossup-button,
+.buzz-button {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.next-tossup-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.buzz-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.buzz-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.answer-input-container {
+    margin-top: auto;
+    display: flex;
+    gap: 1rem;
+}
+
+.answer-input-container input {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.submit-button {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+
+.submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    height: 50px;
+    background-color: #333;
+}
+
+/* Main container layout */
+.main-container {
+    display: grid;
+    grid-template-columns: 250px minmax(600px, 1fr) 300px;
+    min-height: calc(100vh - 50px);
+    gap: 1rem;
+    background-color: #f5f5f5;
+}
+
+/* Game settings section (blue) */
+.game-settings {
+    padding: 1rem;
+    border-right: 1px solid #ddd;
+    background-color: white;
+}
+
+/* Tossup area section (green) */
+.tossup-area {
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
+}
+
+.tossup-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.tossup-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: 1.2rem;
+    line-height: 1.6;
+}
+
+/* Question settings section (red) */
+.question-settings {
+    padding: 1rem;
+    background-color: white;
+    border-left: 1px solid #ddd;
+}
+
+.settings-scroll {
+    height: calc(100vh - 82px);
+    /* 50px navbar + 2 * 16px padding */
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Adjust checkbox groups to be more compact */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+}
+
+.input-group {
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Buttons and controls */
+.row {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.next-tossup-button,
+.buzz-button {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+/* Progress bar */
+.progress-container {
+    height: 6px;
+    margin: 0.5rem 0;
+}
+
+/* Text toggle */
+.text-display-controls {
+    margin-top: 0.5rem;
+}
+
+/* Answer input */
+.answer-input-container {
+    margin-top: auto;
+    display: flex;
+    gap: 1rem;
+}
+
+.answer-input-container input {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.submit-button {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+
+/* Tossup text and metadata */
+.tossup-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+}
+
+.set-name {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+/* Scrollbar styling for settings */
+.settings-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settings-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.settings-scroll::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.settings-scroll::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+/* Game settings section */
+.settings-group {
+    margin-bottom: 1.5rem;
+}
+
+.settings-group h3 {
+    margin-bottom: 1rem;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.setting-item span {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Timer display */
+.timer-display {
+    position: fixed;
+    top: 50px;
+    /* Height of navbar */
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: none;
+    /* Hidden by default */
+}
+
+.timer-display:not(.hidden) {
+    display: flex;
+}
+
+.timer-display>div {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.timer-display>div.hidden {
+    display: none;
+}
+
+.buzz-timer {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.answer-timer {
+    background-color: #2196F3;
+    color: white;
+}
+
+.timer-label {
+    font-weight: normal;
+}
+
+.timer-value {
+    font-family: monospace;
+    font-size: 1.2rem;
+}
+
+/* Score display */
+.score-display {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.score-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #f5f5f5;
+}
+
+.score-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.score-value {
+    font-family: monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    min-width: 1.5rem;
+    text-align: right;
+}
+
+#powerScore {
+    color: #4CAF50;
+}
+
+#tenScore {
+    color: #2196F3;
+}
+
+#negScore {
+    color: #f44336;
+}
+
+#totalScore {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Row styling */
+.row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tossup-text-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.text-display {
+    margin-bottom: 10px;
+}
+
+.tossup-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 0;
+}
+
+.answer-display {
+    border-top: 1px solid #dee2e6;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+.answer {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.shortcut-box {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    /* Ensure it appears above other elements */
+    min-width: 150px;
+    /* Adjust as needed */
+    width: 200px;
+    /* Set a specific width */
+}
+
+.shortcut-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .game-settings,
+    .question-settings {
+        width: 100%;
+        max-height: 200px;
+    }
+
+    .tossup-area {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .tossup-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .score-display {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .score-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    .tossup-text-container {
+        padding: 15px;
+    }
+
+    .tossup-text {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .answer-input-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .answer-input-container input {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .answer-input-container button {
+        width: 100%;
+    }
+
+    .shortcut-box {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+        padding: 10px;
+        background-color: rgba(255, 255, 255, 0.95);
+    }
+
+    .shortcut-box p {
+        font-size: 12px;
+    }
+
+    /* Adjust button sizes for touch */
+    button {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+
+    /* Make checkboxes and toggles easier to tap */
+    .checkbox-label,
+    .switch {
+        padding: 8px 0;
+    }
+
+    /* Adjust progress bar for mobile */
+    .progress-container {
+        height: 8px;
+    }
+
+    /* Make timers more visible on mobile */
+    .buzz-timer,
+    .answer-timer {
+        font-size: 1.2rem;
+        padding: 5px 10px;
+    }
+
+    /* Adjust settings groups for mobile */
+    .settings-group {
+        padding: 10px;
+    }
+
+    .setting-item {
+        margin: 8px 0;
+    }
+
+    /* Make answer display more readable on mobile */
+    .answer {
+        font-size: 1.1rem;
+        padding: 10px;
+    }
+
+    /* Hide some elements on mobile to save space */
+    .tossup-metadata {
+        font-size: 0.9rem;
+    }
+}
+
+/* Additional styles for very small screens */
+@media screen and (max-width: 480px) {
+    .score-display {
+        flex-wrap: wrap;
+    }
+
+    .score-item {
+        flex: 1 1 45%;
+        margin-bottom: 5px;
+    }
+
+    .tossup-text {
+        font-size: 0.95rem;
+    }
+
+    button {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+}
+
+/* Prevent text selection on buttons for better mobile experience */
+button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Improve touch feedback */
+button:active {
+    transform: scale(0.98);
+}
+
+/* Make sure the app takes up the full viewport height on mobile */
+html,
+body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Prevent horizontal scrolling */
+.container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Reading Speed Slider Styles */
+#reading-speed {
+    width: 100%;
+    margin: 10px 0;
+    /* -webkit-appearance: none; */
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+
+#reading-speed::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#reading-speed::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+#reading-speed-value {
+    display: inline-block;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Mobile adjustments for reading speed slider */
+@media screen and (max-width: 768px) {
+    #reading-speed {
+        height: 6px;
+    }
+
+    #reading-speed::-webkit-slider-thumb {
+        width: 18px;
+        height: 18px;
+    }
+
+    #reading-speed::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+    }
+}

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask App</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <!-- Black navbar -->
+    <div class="navbar">
+        <!-- Navbar content -->
+    </div>
+    </div>
+    <div class="timer-display">
+        <div class="buzz-timer hidden">
+            <span class="timer-label">Time to buzz:</span>
+            <span class="timer-value">8</span>
+        </div>
+        <div class="answer-timer hidden">
+            <span class="timer-label">Time to answer:</span>
+            <span class="timer-value">5</span>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Blue section - Game settings -->
+        <div class="game-settings">
+            <div class="settings-scroll">
+                <div class="settings-group">
+                    <h3>Game Settings</h3>
+                    <div class="setting-item">
+                        <div class="text-display-controls" id="text-toggle-container">
+                            <label class="switch">
+                                <input type="checkbox" id="show-text-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span>Show Tossup Text</span>
+                        </div>
+                        <!-- <label class="switch">
+                            <input type="checkbox" id="showTextToggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Show Tossup Text</span> -->
+                    </div>
+                    <div class="setting-item">
+                        <label class="switch">
+                            <input type="checkbox" id="allow-rebuzz-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Allow Re-buzzing</span>
+                    </div>
+                    <div class="setting-item">
+                        <label for="reading-speed">Reading Speed: <span id="reading-speed-value">1.0x</span></label>
+                        <input type="range" id="reading-speed" min="0.75" max="1.5" step="0.05" value="1.0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="shortcut-box">
+            <p>Shortcuts:</p>
+            <p><strong>N</strong>: Next</p>
+            <p><strong>Spacebar</strong>: Buzz</p>
+        </div>
+
+        <!-- Green section - Tossup interaction area -->
+        <div class="tossup-area">
+            <div class="tossup-controls">
+                <div class="row">
+                    <button id="nextTossup" class="next-tossup-button" title="Shortcut: N">Next</button>
+                    <button id="buzzButton" class="buzz-button" title="Shortcut: Spacebar">Buzz</button>
+                    <div class="score-display">
+                        <div class="score-item">
+                            <span class="score-label">Powers:</span>
+                            <span class="score-value" id="powerScore">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Tens:</span>
+                            <span class="score-value" id="tenScore">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Negs:</span>
+                            <span class="score-value" id="negScore">0</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Total:</span>
+                            <span class="score-value" id="totalScore">0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+
+            <div class="tossup-text-container">
+                <div class="tossup-metadata hidden">
+                    <div class="set-name"></div>
+                </div>
+                <div class="text-display hidden">
+                    <div class="tossup-text"></div>
+                </div>
+                <div class="answer-display hidden">
+                    <div id="answer" class="answer"></div>
+                </div>
+            </div>
+            <div class="answer-input-container hidden">
+                <input type="text" id="answerInput" placeholder="Type your answer..." disabled>
+                <button id="submitAnswer" class="submit-button" disabled>Submit</button>
+            </div>
+
+            <!-- Hidden audio element -->
+            <audio id="audio" class="hidden">
+                <source id="audioSource" src="" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+
+        <!-- Red section - Question settings -->
+        <div class="question-settings">
+            <div class="settings-scroll">
+                <div class="controls">
+                    <div class="input-group">
+                        <label>Difficulty Levels:</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="1"> 1 - Middle School
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="2"> 2 - Easy High School
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="3"> 3 - Regular High School
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="4"> 4 - Hard High School
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="5"> 5 - National High School
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="6"> 6 - Easy College
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="7"> 7 - Medium College
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="8"> 8 - Regionals College
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="9"> 9 - Nationals College
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="difficulty" value="10"> 10 - Nationals College (Hard)
+                            </label>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Subjects:</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Science"> Science
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="History"> History
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Literature"> Literature
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Fine Arts"> Fine Arts
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Geography"> Geography
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Religion"> Religion
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Mythology"> Mythology
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Philosophy"> Philosophy
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Social Science"> Social Science
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Current Events"> Current Events
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="subject" value="Trash"> Trash
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

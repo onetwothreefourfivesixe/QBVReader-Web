@@ -18,7 +18,7 @@ app = Flask(__name__)
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'static/audio')
-app.config['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS', 'credentials.json')
+app.config['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
 # Ensure upload folder exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -27,10 +27,14 @@ logger.info(f"Using upload folder: {app.config['UPLOAD_FOLDER']}")
 # Initialize Google Cloud Text-to-Speech client
 try:
     # Set the environment variable for Google credentials
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = app.config['GOOGLE_APPLICATION_CREDENTIALS']
-    # Initialize the client
-    texttospeech_client = texttospeech.TextToSpeechClient()
-    logger.info("Google Cloud Text-to-Speech client initialized successfully.")
+    if app.config['GOOGLE_APPLICATION_CREDENTIALS']:
+        os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = app.config['GOOGLE_APPLICATION_CREDENTIALS']
+        # Initialize the client
+        texttospeech_client = texttospeech.TextToSpeechClient()
+        logger.info("Google Cloud Text-to-Speech client initialized successfully.")
+    else:
+        logger.error("GOOGLE_APPLICATION_CREDENTIALS environment variable not set")
+        texttospeech_client = None
 except Exception as e:
     logger.error(f"Error initializing Google Cloud Text-to-Speech client: {e}")
     texttospeech_client = None
@@ -172,6 +176,7 @@ def serve_audio(filename):
         return jsonify({'error': str(e)}), 404
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))
-    host = os.getenv('HOST', '0.0.0.0')
-    app.run(host=host, port=port, debug=True) 
+    pass
+    # port = int(os.getenv('PORT', 5000))
+    # host = os.getenv('HOST', '0.0.0.0')
+    # app.run(host=host, port=port)#, debug=True) 

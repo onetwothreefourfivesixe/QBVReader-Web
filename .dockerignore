@@ -38,7 +38,6 @@ ENV/
 *.log
 
 # Local development
-.env
 *.db
 *.sqlite3
 
@@ -49,4 +48,19 @@ static/audio/*
 # Credentials
 credentials.json
 *.pem
-*.key 
+*.key
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Environment files
+# .env
+# .env.local
+# .env.development.local
+# .env.test.local
+# .env.production.local
+
+# Other
+.qodo
+.vscode 

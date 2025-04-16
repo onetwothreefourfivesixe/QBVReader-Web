@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const answerTimerValue = answerTimer.querySelector('.timer-value');
     const readingSpeedSlider = document.getElementById('reading-speed');
     const readingSpeedValue = document.getElementById('reading-speed-value');
+    const toggleCorrectButton = document.getElementById('toggleCorrect');
 
     // Score elements
     const powerScoreElement = document.getElementById('powerScore');
@@ -37,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let isCorrect = false;
     let buzzTimerInterval = null;
     let answerTimerInterval = null;
+    let lastBuzzType = null; // 'power', 'regular', or 'neg'
 
     // Score tracking
     let scores = {
@@ -96,6 +98,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const markedText = tossup.markBuzzPoint(audio.currentTime);
         if (markedText) {
             tossupTextElement.textContent = markedText;
+        }
+        toggleCorrectButton.classList.remove('hidden');
+        lastBuzzType = tossup.isPower ? 'power' : 'regular';
+        if (!isCorrect) {
+            lastBuzzType = 'neg';
+        }
+
+        // Set initial button state
+        if (isCorrect) {
+            toggleCorrectButton.classList.add('correct');
+            toggleCorrectButton.classList.remove('incorrect');
+            toggleCorrectButton.textContent = 'Mark as Incorrect';
+        } else {
+            toggleCorrectButton.classList.add('incorrect');
+            toggleCorrectButton.classList.remove('correct');
+            toggleCorrectButton.textContent = 'Mark as Correct';
         }
     }
 
@@ -274,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Next button event listener
     nextButton.addEventListener('click', async () => {
+        toggleCorrectButton.classList.add('hidden');
         try {
             console.log('Next button clicked - starting tossup generation');
             // Update last interaction time
@@ -478,5 +497,46 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add loadeddata event listener for audio
     audio.addEventListener('loadeddata', () => {
         console.log('Audio data loaded successfully');
+    });
+
+    // Add toggle correct button handler
+    toggleCorrectButton.addEventListener('click', () => {
+        if (lastBuzzType === 'power') {
+            scores.powers--;
+            scores.negs++;
+            isCorrect = false;
+        } else if (lastBuzzType === 'regular') {
+            scores.tens--;
+            scores.negs++;
+            isCorrect = false;
+        } else if (lastBuzzType === 'neg') {
+            scores.negs--;
+            if (tossup.isPower) {
+                scores.powers++;
+            } else {
+                scores.tens++;
+            }
+            isCorrect = true;
+        }
+
+        // Update last buzz type
+        if (isCorrect) {
+            lastBuzzType = tossup.isPower ? 'power' : 'regular';
+        } else {
+            lastBuzzType = 'neg';
+        }
+
+        // Update button appearance
+        if (isCorrect) {
+            toggleCorrectButton.classList.remove('incorrect');
+            toggleCorrectButton.classList.add('correct');
+            toggleCorrectButton.textContent = 'Mark as Incorrect';
+        } else {
+            toggleCorrectButton.classList.remove('correct');
+            toggleCorrectButton.classList.add('incorrect');
+            toggleCorrectButton.textContent = 'Mark as Correct';
+        }
+
+        updateScoreDisplay();
     });
 });

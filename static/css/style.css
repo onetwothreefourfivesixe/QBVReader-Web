@@ -6,6 +6,7 @@ body {
     background-color: #f5f5f5;
 }
 
+/* Overall container styling (if needed) */
 .container {
     max-width: 800px;
     margin: 0 auto;
@@ -53,6 +54,7 @@ button:hover {
     background-color: #45a049;
 }
 
+/* Saved texts */
 .saved-texts {
     margin-top: 30px;
 }
@@ -123,7 +125,7 @@ audio::-webkit-media-controls-timeline {
     display: none;
 }
 
-/* Add styles for multiselect */
+/* Multiselect styles */
 .input-group select[multiple] {
     height: 150px;
     padding: 5px;
@@ -138,7 +140,7 @@ audio::-webkit-media-controls-timeline {
     color: white;
 }
 
-/* Add styles for checkbox groups */
+/* Checkbox groups */
 .checkbox-group {
     display: flex;
     flex-direction: column;
@@ -157,7 +159,7 @@ audio::-webkit-media-controls-timeline {
     cursor: pointer;
 }
 
-/* Add styles for the tossup metadata section */
+/* Tossup metadata */
 .tossup-metadata {
     background-color: #f0f7ff;
     border-radius: 4px;
@@ -197,10 +199,7 @@ audio::-webkit-media-controls-timeline {
     text-decoration: underline;
 }
 
-.answer i {
-    font-style: italic;
-}
-
+.answer i,
 .answer em {
     font-style: italic;
 }
@@ -228,7 +227,7 @@ audio::-webkit-media-controls-timeline {
     text-decoration: underline;
 }
 
-/* Text display styles */
+/* Text display */
 .text-display {
     margin-top: 20px;
     padding: 15px;
@@ -248,7 +247,7 @@ audio::-webkit-media-controls-timeline {
     min-height: 100px;
 }
 
-/* Hide native audio element */
+/* Hide elements with .hidden */
 .hidden {
     display: none !important;
 }
@@ -295,7 +294,7 @@ audio::-webkit-media-controls-timeline {
     display: none;
 }
 
-/* Toggle switch styles */
+/* Toggle switch */
 .text-display-controls {
     display: flex;
     align-items: center;
@@ -354,7 +353,7 @@ input:checked+.slider:before {
     border-radius: 50%;
 }
 
-/* Existing styles */
+/* Existing layout styles */
 .controls {
     display: flex;
     flex-direction: column;
@@ -365,12 +364,12 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .input-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 .input-group select {
@@ -389,6 +388,7 @@ input:checked+.slider:before {
 
 .row {
     display: flex;
+    align-items: center;
     gap: 1rem;
     margin-bottom: 1rem;
 }
@@ -448,7 +448,7 @@ input:checked+.slider:before {
     background-color: #333;
 }
 
-/* Main container layout */
+/* Main container grid layout */
 .main-container {
     display: grid;
     grid-template-columns: 250px minmax(600px, 1fr) 300px;
@@ -500,91 +500,11 @@ input:checked+.slider:before {
 
 .settings-scroll {
     height: calc(100vh - 82px);
-    /* 50px navbar + 2 * 16px padding */
     overflow-y: auto;
     padding-right: 0.5rem;
 }
 
-/* Adjust checkbox groups to be more compact */
-.checkbox-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-}
-
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-size: 0.9rem;
-}
-
-.input-group {
-    margin-bottom: 1rem;
-}
-
-.input-group label {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-/* Buttons and controls */
-.row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.next-tossup-button,
-.buzz-button {
-    padding: 0.75rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 500;
-}
-
-/* Progress bar */
-.progress-container {
-    height: 6px;
-    margin: 0.5rem 0;
-}
-
-/* Text toggle */
-.text-display-controls {
-    margin-top: 0.5rem;
-}
-
-/* Answer input */
-.answer-input-container {
-    margin-top: auto;
-    display: flex;
-    gap: 1rem;
-}
-
-.answer-input-container input {
-    flex: 1;
-    padding: 0.75rem;
-    font-size: 1.1rem;
-}
-
-.submit-button {
-    padding: 0.75rem 2rem;
-    font-size: 1.1rem;
-}
-
-/* Tossup text and metadata */
-.tossup-text {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    margin: 1rem 0;
-}
-
-.set-name {
-    font-size: 1rem;
-    color: #666;
-    margin-bottom: 1rem;
-}
-
-/* Scrollbar styling for settings */
+/* Adjusted scrollbar styling for settings */
 .settings-scroll::-webkit-scrollbar {
     width: 8px;
 }
@@ -603,7 +523,7 @@ input:checked+.slider:before {
     background: #999;
 }
 
-/* Game settings section */
+/* Settings group */
 .settings-group {
     margin-bottom: 1.5rem;
 }
@@ -630,7 +550,6 @@ input:checked+.slider:before {
 .timer-display {
     position: fixed;
     top: 50px;
-    /* Height of navbar */
     left: 0;
     right: 0;
     z-index: 1000;
@@ -641,7 +560,6 @@ input:checked+.slider:before {
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: none;
-    /* Hidden by default */
 }
 
 .timer-display:not(.hidden) {
@@ -762,13 +680,6 @@ input:checked+.slider:before {
     margin-top: 10px;
 }
 
-.answer {
-    font-size: 1.2rem;
-    font-weight: normal;
-    color: #2c3e50;
-    margin: 0;
-}
-
 .shortcut-box {
     position: fixed;
     bottom: 20px;
@@ -779,11 +690,8 @@ input:checked+.slider:before {
     padding: 20px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     z-index: 1000;
-    /* Ensure it appears above other elements */
     min-width: 150px;
-    /* Adjust as needed */
     width: 200px;
-    /* Set a specific width */
 }
 
 .shortcut-box p {
@@ -912,9 +820,9 @@ input:checked+.slider:before {
         padding: 10px;
     }
 
-    /* Hide some elements on mobile to save space */
-    .tossup-metadata {
-        font-size: 0.9rem;
+    /* New rule: Stack main container sections vertically */
+    .main-container {
+        grid-template-columns: 1fr;
     }
 }
 
@@ -971,7 +879,6 @@ body {
 #reading-speed {
     width: 100%;
     margin: 10px 0;
-    /* -webkit-appearance: none; */
     height: 8px;
     background: #ddd;
     border-radius: 4px;
@@ -980,7 +887,6 @@ body {
 
 #reading-speed::-webkit-slider-thumb {
     -webkit-appearance: none;
-    appearance: none;
     width: 20px;
     height: 20px;
     background: #4CAF50;
@@ -1018,4 +924,43 @@ body {
         width: 18px;
         height: 18px;
     }
+}
+
+/* Toggle correct button */
+.toggle-correct-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #666;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.toggle-correct-button:hover {
+    background-color: #888;
+}
+
+.toggle-correct-button.hidden {
+    display: none;
+}
+
+.toggle-correct-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-correct-button.correct {
+    background-color: #4CAF50;
+    /* Green */
+}
+
+.toggle-correct-button.incorrect {
+    background-color: #f44336;
+    /* Red */
 }

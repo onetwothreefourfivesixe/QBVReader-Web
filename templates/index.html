@@ -13,7 +13,7 @@
     <div class="navbar">
         <!-- Navbar content -->
     </div>
-    </div>
+
     <div class="timer-display">
         <div class="buzz-timer hidden">
             <span class="timer-label">Time to buzz:</span>
@@ -39,11 +39,6 @@
                             </label>
                             <span>Show Tossup Text</span>
                         </div>
-                        <!-- <label class="switch">
-                            <input type="checkbox" id="showTextToggle" checked>
-                            <span class="slider round"></span>
-                        </label>
-                        <span>Show Tossup Text</span> -->
                     </div>
                     <div class="setting-item">
                         <label class="switch">
@@ -106,6 +101,7 @@
                 <div class="answer-display hidden">
                     <div id="answer" class="answer"></div>
                 </div>
+                <button id="toggleCorrect" class="toggle-correct-button hidden">Toggle Correct/Incorrect</button>
             </div>
             <div class="answer-input-container hidden">
                 <input type="text" id="answerInput" placeholder="Type your answer..." disabled>

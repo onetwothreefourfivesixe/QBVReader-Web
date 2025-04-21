@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About QBVReader</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <!-- Navbar (same as index.html) -->
+    <!-- Black navbar -->
+    <div class="navbar bg-dark">
+        <nav class="w-100 d-flex align-items-center">
+            <img src="{{ url_for('static', filename='assets/favicon-32x32.png') }}" alt="QBVReader Logo"
+                class="navbar-logo">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{{ url_for('home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/about">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="https://forms.gle/pro5Zvx4UDqc92Jd9" target="_blank">
+                        <i class="bi bi-bug"></i> Report Bug
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h1 class="card-title mb-4">About QBVReader</h1>
+
+                        <section class="mb-4">
+                            <h2 class="h4">What is QBVReader?</h2>
+                            <p>QBVReader is a comprehensive Quizbowl/NAQT BuzzWord practice app. Use it to practice
+                                tossups via togglable text or audio. This is an extension of the existing Discord bot of
+                                the same name, which you can learn more about <a
+                                    href="https://qbvreader.netlify.app/">here</a>.
+                            </p>
+                        </section>
+
+                        <section class="mb-4">
+                            <h2 class="h4">Contact</h2>
+                            <p>
+                                Join the QBVRReader community to discuss quizbowl, contribute to the project, and
+                                connect with other players or find me at HSQuizBowl Forum with the username geoShaw:
+                            </p>
+                            <div class="list-group">
+                                <a href="https://discord.gg/TwhscUWy9z" class="list-group-item list-group-item-action"
+                                    target="_blank">
+                                    <i class="bi bi-discord"></i> Join our Discord Server
+                                </a>
+                                <a href="https://hsquizbowl.org/forums/index.php"
+                                    class="list-group-item list-group-item-action" target="_blank">
+                                    <i class="bi bi-forum"></i> HSQuizbowl Forums
+                                </a>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -539,4 +539,121 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateScoreDisplay();
     });
+
+    // Load settings when page loads
+    loadSettings();
+
+    // Save settings before page unloads
+    window.addEventListener('beforeunload', saveSettings);
+
+    // Save settings when they change
+    document.querySelectorAll('.settings-input').forEach(input => {
+        input.addEventListener('change', saveSettings);
+    });
 });
+
+// Add these functions
+async function saveSettings() {
+    try {
+        const settings = {
+            difficulties: getSelectedDifficulties(),
+            subjects: getSelectedSubjects(),
+            readingSpeed: parseFloat(document.getElementById('reading-speed').value),
+            showText: document.getElementById('show-text-toggle').checked,
+            powers: parseInt(document.getElementById('powerScore').textContent),
+            tens: parseInt(document.getElementById('tenScore').textContent),
+            negs: parseInt(document.getElementById('negScore').textContent),
+            total: parseInt(document.getElementById('totalScore').textContent)
+        };
+
+        const response = await fetch('/save-settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(settings)
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to save settings');
+        }
+    } catch (error) {
+        console.error('Error saving settings:', error);
+    }
+}
+
+async function loadSettings() {
+    try {
+        const response = await fetch('/load-settings');
+        const data = await response.json();
+
+        if (data.success && data.settings) {
+            // Apply game settings
+            if (data.settings.difficulties) {
+                setSelectedDifficulties(data.settings.difficulties);
+            }
+            if (data.settings.subjects) {
+                setSelectedSubjects(data.settings.subjects);
+            }
+            if (data.settings.readingSpeed) {
+                document.getElementById('reading-speed').value = data.settings.readingSpeed;
+            }
+            if (data.settings.showText !== undefined) {
+                document.getElementById('show-text-toggle').checked = data.settings.showText;
+            }
+        }
+
+        if (data.success && data.scores) {
+            // Apply scores
+            document.getElementById('powerScore').textContent = data.scores.powers || '0';
+            document.getElementById('tenScore').textContent = data.scores.tens || '0';
+            document.getElementById('negScore').textContent = data.scores.negs || '0';
+            document.getElementById('totalScore').textContent = data.scores.total || '0';
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+}
+
+function getSelectedDifficulties() {
+    return Array.from(document.querySelectorAll('input[name="difficulty"]:checked'))
+        .map(cb => cb.value);
+}
+
+function getSelectedSubjects() {
+    return Array.from(document.querySelectorAll('input[name="subject"]:checked'))
+        .map(cb => cb.value);
+}
+
+function setSelectedDifficulties(difficulties) {
+    document.querySelectorAll('input[name="difficulty"]').forEach(cb => {
+        cb.checked = difficulties.includes(cb.value);
+    });
+}
+
+function setSelectedSubjects(subjects) {
+    document.querySelectorAll('input[name="subject"]').forEach(cb => {
+        cb.checked = subjects.includes(cb.value);
+    });
+}
+
+// When showing the buzz timer
+function showBuzzTimer() {
+    document.querySelector('.timer-display').classList.add('active');
+    document.querySelector('.buzz-timer').classList.remove('hidden');
+    // ...rest of your timer code
+}
+
+// When showing the answer timer
+function showAnswerTimer() {
+    document.querySelector('.timer-display').classList.add('active');
+    document.querySelector('.answer-timer').classList.remove('hidden');
+    // ...rest of your timer code
+}
+
+// When hiding the timers
+function hideTimers() {
+    document.querySelector('.timer-display').classList.remove('active');
+    document.querySelector('.buzz-timer').classList.add('hidden');
+    document.querySelector('.answer-timer').classList.add('hidden');
+}

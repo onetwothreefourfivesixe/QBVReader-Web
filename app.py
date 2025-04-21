@@ -1,10 +1,11 @@
-from flask import Flask, render_template, jsonify, request, send_from_directory
+from flask import Flask, render_template, jsonify, request, send_from_directory, session
 from dotenv import load_dotenv
 import os
 from google.cloud import texttospeech
 import logging
 from util.fetchQuestions import checkTossupAnswer
 from util.util import clear_user_folder, generate_tossup_files, get_file_paths, get_or_create_user_id, get_user_folder, read_sync_map
+from datetime import timedelta
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -14,9 +15,10 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')  # Needed for sessions
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)  # Optional: set session lifetime
 
 # Configuration
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev')
 app.config['UPLOAD_FOLDER'] = os.getenv('UPLOAD_FOLDER', 'static/audio')
 app.config['GOOGLE_APPLICATION_CREDENTIALS'] = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
@@ -43,6 +45,10 @@ except Exception as e:
 def home():
     get_or_create_user_id()
     return render_template('index.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html')
 
 @app.route('/generate-tossup', methods=['POST'])
 def generate_tossup():
@@ -164,8 +170,8 @@ def cleanup_files():
         logger.error(f"Error cleaning up files: {e}")
         return jsonify({
             'success': False,
-            'error': str(e)
-        }), 500
+            'error': str(e)}
+        ), 500
 
 @app.route('/audio/<path:filename>')
 def serve_audio(filename):
@@ -175,8 +181,41 @@ def serve_audio(filename):
         logger.error(f"Error serving audio file {filename}: {e}")
         return jsonify({'error': str(e)}), 404
 
+@app.route('/save-settings', methods=['POST'])
+def save_settings():
+    try:
+        data = request.get_json()
+        session['game_settings'] = {
+            'difficulties': data.get('difficulties', []),
+            'subjects': data.get('subjects', []),
+            'readingSpeed': data.get('readingSpeed', 1.0),
+            'showText': data.get('showText', True)
+        }
+        session['scores'] = {
+            'powers': data.get('powers', 0),
+            'tens': data.get('tens', 0),
+            'negs': data.get('negs', 0),
+            'total': data.get('total', 0)
+        }
+        return jsonify({'success': True})
+    except Exception as e:
+        logger.error(f"Error saving settings: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/load-settings')
+def load_settings():
+    try:
+        return jsonify({
+            'success': True,
+            'settings': session.get('game_settings', {}),
+            'scores': session.get('scores', {})
+        })
+    except Exception as e:
+        logger.error(f"Error loading settings: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 if __name__ == '__main__':
     pass
     port = int(os.getenv('PORT', 5000))
     host = os.getenv('HOST', '0.0.0.0')
-    app.run(host=host, port=port)#, debug=True) 
+    app.run(host=host, port=port)#, debug=True)

@@ -501,100 +501,65 @@ input:checked+.slider:before {
 /* Main container grid layout */
 .main-container {
     display: grid;
-    grid-template-columns: 250px minmax(600px, 1fr) 300px;
-    min-height: calc(100vh - 40px);
-    /* Updated to match new navbar height */
+    grid-template-columns: 250px 1fr 250px;
     gap: 1rem;
-    background-color: #f5f5f5;
+    padding: 1rem;
+    height: calc(100vh - 60px);
+    /* Adjust based on navbar height */
+    max-height: calc(100vh - 60px);
+    overflow: hidden;
 }
 
 /* Game settings section (blue) */
-.game-settings {
-    padding: 1rem;
-    border-right: 1px solid #ddd;
-    background-color: white;
-}
-
-/* Tossup area section (green) */
-.tossup-area {
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin: 1rem;
-}
-
-.tossup-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.tossup-content {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    font-size: 1.2rem;
-    line-height: 1.6;
-}
-
-/* Question settings section (red) */
+.game-settings,
 .question-settings {
+    overflow: hidden;
+    /* Prevent outer container scroll */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Take full height of grid area */
+    background-color: var(--section-bg);
+    border-radius: 8px;
     padding: 1rem;
-    background-color: white;
-    border-left: 1px solid #ddd;
 }
 
 .settings-scroll {
-    height: calc(100vh - 82px);
+    flex: 1;
     overflow-y: auto;
-    padding-right: 0.5rem;
+    /* Enable vertical scrolling */
+    padding-right: 10px;
+    /* Space for scrollbar */
+    margin-right: -10px;
+    /* Compensate for padding */
 }
 
-/* Adjusted scrollbar styling for settings */
+/* Customize scrollbar appearance */
 .settings-scroll::-webkit-scrollbar {
     width: 8px;
 }
 
 .settings-scroll::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
 }
 
 .settings-scroll::-webkit-scrollbar-thumb {
-    background: #ccc;
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
 }
 
 .settings-scroll::-webkit-scrollbar-thumb:hover {
-    background: #999;
+    background: rgba(0, 0, 0, 0.3);
 }
 
-/* Settings group */
+/* Ensure content within settings is properly spaced */
 .settings-group {
-    margin-bottom: 1.5rem;
-}
-
-.settings-group h3 {
     margin-bottom: 1rem;
-    color: #333;
-    font-size: 1.1rem;
 }
 
 .setting-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.5rem;
-}
-
-.setting-item span {
-    font-size: 0.95rem;
-    color: #555;
+    margin-bottom: 0.8rem;
 }
 
 /* Timer display */

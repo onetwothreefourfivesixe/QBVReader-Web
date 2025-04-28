@@ -4,7 +4,7 @@ class StorageManager {
         this.userId = null;
         this.lastInteractionTime = Date.now();
         this.cleanupInterval = null;
-        this.CLEANUP_TIMEOUT = 10 * 60 * 1000; // 10 minutes in milliseconds
+        this.CLEANUP_TIMEOUT = 5 * 60 * 1000; // 10 minutes in milliseconds
         this.initialize();
     }
 
@@ -59,44 +59,51 @@ class StorageManager {
         const timeSinceLastInteraction = Date.now() - this.lastInteractionTime;
 
         if (timeSinceLastInteraction >= this.CLEANUP_TIMEOUT) {
-            try {
-                // Call backend to cleanup files
-                const response = await fetch('/cleanup-files', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        userId: this.userId
-                    })
-                });
+            await this.performCleanup();
+        }
+    }
 
-                if (!response.ok) {
-                    throw new Error('Failed to cleanup files');
-                }
+    async performCleanup() {
+        try {
+            const response = await fetch('/cleanup-files', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: this.userId
+                })
+            });
 
-                // Reset interaction time after successful cleanup
-                this.updateLastInteractionTime();
-            } catch (error) {
-                console.error('Error during cleanup:', error);
+            if (!response.ok) {
+                throw new Error('Failed to cleanup files');
             }
+
+            this.updateLastInteractionTime();
+        } catch (error) {
+            console.error('Error during cleanup:', error);
         }
     }
 
     // Method to be called when the page is unloaded
-    cleanupOnUnload() {
+    async cleanupOnUnload() {
         if (this.cleanupInterval) {
             clearInterval(this.cleanupInterval);
         }
+        await this.performCleanup();
     }
 }
 
 // Create and export the storage manager instance
 const storageManager = new StorageManager();
 
-// Add cleanup on page unload
-window.addEventListener('beforeunload', () => {
+// Handle tab/browser closure
+window.addEventListener('beforeunload', (event) => {
+    // Prevent immediate closure to allow cleanup
+    event.preventDefault();
     storageManager.cleanupOnUnload();
+    // Chrome requires returnValue to be set
+    event.returnValue = '';
 });
 
 export { storageManager };

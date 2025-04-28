@@ -260,19 +260,6 @@ audio::-webkit-media-controls-timeline {
     gap: 10px;
 }
 
-#play-pause-button {
-    min-width: 60px;
-    padding: 8px 12px;
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#play-pause-button:hover {
-    background-color: #45a049;
-}
 
 .progress-container {
     width: 100%;
@@ -393,8 +380,24 @@ input:checked+.slider:before {
     margin-bottom: 1rem;
 }
 
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.score-display {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+}
+
 .next-tossup-button,
-.buzz-button {
+.buzz-button,
+.pause-button {
+    flex: 0 1 auto;
+    min-width: 120px;
     padding: 0.75rem 2rem;
     font-size: 1.1rem;
     font-weight: 500;
@@ -413,6 +416,31 @@ input:checked+.slider:before {
 .buzz-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
+}
+
+.pause-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+.pause-button:hover {
+    background-color: #1b73bb;
+}
+
+.pause-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Style for when the button shows Resume */
+.pause-button.resumed {
+    background-color: #4CAF50;
+    /* Green when showing Resume */
+    color: white;
+}
+
+.pause-button.resumed:hover {
+    background-color: #45a049;
 }
 
 .answer-input-container {
@@ -571,9 +599,8 @@ input:checked+.slider:before {
 
 /* Timer display */
 .timer-display {
-    display: none;
     position: fixed;
-    top: 0;
+    top: 40px;
     left: 0;
     right: 0;
     background: white;
@@ -587,37 +614,23 @@ input:checked+.slider:before {
     display: block;
 }
 
-.timer-display>div {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    font-size: 1.1rem;
+.buzz-timer,
+.answer-timer {
+    font-size: 1.2rem;
     font-weight: bold;
 }
 
-.timer-display>div.hidden {
-    display: none;
-}
-
-.buzz-timer {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.answer-timer {
-    background-color: #2196F3;
-    color: white;
-}
-
 .timer-label {
-    font-weight: normal;
+    margin-right: 10px;
 }
 
 .timer-value {
-    font-family: monospace;
-    font-size: 1.2rem;
+    color: #f44336;
+}
+
+.buzz-timer.hidden,
+.answer-timer.hidden {
+    display: none;
 }
 
 /* Score display */
@@ -851,20 +864,12 @@ input:checked+.slider:before {
 @media screen and (max-width: 480px) {
     .score-display {
         flex-wrap: wrap;
+        gap: 0.5rem;
     }
 
     .score-item {
-        flex: 1 1 45%;
-        margin-bottom: 5px;
-    }
-
-    .tossup-text {
-        font-size: 0.95rem;
-    }
-
-    button {
-        padding: 10px 15px;
-        font-size: 14px;
+        flex: 1 1 40%;
+        min-width: 100px;
     }
 }
 
@@ -984,4 +989,32 @@ body {
 .toggle-correct-button.incorrect {
     background-color: #f44336;
     /* Red */
+}
+
+/* Notification styles */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.notification {
+    background-color: #333;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.hidden {
+    display: none;
 }

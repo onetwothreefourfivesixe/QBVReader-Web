@@ -12,7 +12,6 @@
 </head>
 
 <body>
-    <!-- Black navbar -->
     <div class="navbar bg-dark">
         <nav class="w-100 d-flex align-items-center">
             <img src="{{ url_for('static', filename='assets/favicon-32x32.png') }}" alt="QBVReader Logo"
@@ -33,7 +32,14 @@
         </nav>
     </div>
 
-    <div class="timer-display">
+    <!-- Add this right after the navbar -->
+    <div class="notification-container">
+        <div class="notification hidden">
+            <span class="notification-message"></span>
+        </div>
+    </div>
+
+    <div class="timer-display hidden">
         <div class="buzz-timer hidden">
             <span class="timer-label">Time to buzz:</span>
             <span class="timer-value">8</span>
@@ -67,6 +73,9 @@
                         <span>Allow Re-buzzing</span>
                     </div>
                     <div class="setting-item">
+                        <button id="resetScores" class="reset-button">Reset Scores</button>
+                    </div>
+                    <div class="setting-item">
                         <label for="reading-speed">Reading Speed: <span id="reading-speed-value">1.0x</span></label>
                         <input type="range" id="reading-speed" min="0.75" max="1.5" step="0.05" value="1.0">
                     </div>
@@ -77,14 +86,16 @@
         <div class="shortcut-box">
             <p>Shortcuts:</p>
             <p><strong>N</strong>: Next</p>
+            <p><strong>P</strong>: Pause</p>
             <p><strong>Spacebar</strong>: Buzz</p>
         </div>
 
         <!-- Green section - Tossup interaction area -->
         <div class="tossup-area">
             <div class="tossup-controls">
-                <div class="row">
+                <div class="button-container">
                     <button id="nextTossup" class="next-tossup-button" title="Shortcut: N">Next</button>
+                    <button id="pauseButton" class="pause-button" title="Shortcut: P">Pause</button>
                     <button id="buzzButton" class="buzz-button" title="Shortcut: Spacebar">Buzz</button>
                     <div class="score-display">
                         <div class="score-item">

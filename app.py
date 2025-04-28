@@ -189,7 +189,13 @@ def save_settings():
             'difficulties': data.get('difficulties', []),
             'subjects': data.get('subjects', []),
             'readingSpeed': data.get('readingSpeed', 1.0),
-            'showText': data.get('showText', True)
+            'showText': data.get('showText', True),
+            'goals': data.get('goals', {
+                'powers': 0,
+                'tens': 0,
+                'negs': 0,
+                'total': 0
+            })
         }
         session['scores'] = {
             'powers': data.get('powers', 0),
@@ -212,6 +218,20 @@ def load_settings():
         })
     except Exception as e:
         logger.error(f"Error loading settings: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@app.route('/reset-scores', methods=['POST'])
+def reset_scores():
+    try:
+        session['scores'] = {
+            'powers': 0,
+            'tens': 0,
+            'negs': 0,
+            'total': 0
+        }
+        return jsonify({'success': True})
+    except Exception as e:
+        logger.error(f"Error resetting scores: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 if __name__ == '__main__':

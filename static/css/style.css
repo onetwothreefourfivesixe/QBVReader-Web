@@ -699,6 +699,50 @@ input:checked+.slider:before {
     color: #333;
 }
 
+/* Add these new styles */
+.collapsible-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.collapsible-header:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.collapsible-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.collapse-icon {
+    transition: transform 0.3s ease;
+}
+
+.collapsible-header.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+/* Existing input-group style */
+.input-group {
+    margin-bottom: 1.5rem;
+    background-color: var(--section-bg);
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
 /* Mobile Responsive Styles */
 @media screen and (max-width: 768px) {
     body {

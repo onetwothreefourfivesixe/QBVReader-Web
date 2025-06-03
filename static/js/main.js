@@ -96,11 +96,16 @@ document.addEventListener('DOMContentLoaded', () => {
         textDisplay.classList.remove('hidden');
         document.querySelector('.answer-display').classList.remove('hidden');
 
-        // Mark the buzz point in the text
-        const markedText = tossup.markBuzzPoint(audio.currentTime);
+        // Mark the buzz point in the text and add power mark
+        let markedText = tossup.markBuzzPoint(audio.currentTime);
         if (markedText) {
+            // Add power mark only after tossup has ended
+            if (tossup.powerMarkIndex !== undefined && tossup.powerMarkIndex >= 0) {
+                markedText = tossup.addPowerMark(markedText);
+            }
             tossupTextElement.textContent = markedText;
         }
+
         toggleCorrectButton.classList.remove('hidden');
         lastBuzzType = tossup.isPower ? 'power' : 'regular';
         if (!isCorrect) {
@@ -513,24 +518,35 @@ document.addEventListener('DOMContentLoaded', () => {
     showTextToggle.addEventListener('change', () => {
         textDisplay.classList.toggle('hidden', !showTextToggle.checked);
         if (showTextToggle.checked && tossup) {
-            // Only start text sync if the audio is still playing
             if (!audio.paused) {
+                // Audio is playing - start text sync without power mark
                 tossup.startTextSync(tossupTextElement, audio);
-            } else if (tossup.displayedText) {
-                // If audio is paused, show the full text
-                let fullText = '';
-                if (tossup.syncMap && tossup.syncMap.fragments) {
-                    // Build the full text from all fragments
-                    tossup.syncMap.fragments.forEach((fragment, i) => {
-                        if (fragment.lines && fragment.lines.length > 0) {
-                            if (i > 0 && !(/^[.,!?;:)]/.test(fragment.lines[0]))) {
-                                fullText += ' ';
+            } else {
+                // Audio is paused
+                if (isBuzzed || audio.ended) {
+                    // If buzzed or audio ended, show text with buzz point and power mark
+                    const markedText = tossup.markBuzzPoint(audio.currentTime);
+                    if (markedText) {
+                        tossupTextElement.textContent = markedText;
+                    }
+                } else {
+                    // Show text up to current point without power mark
+                    let currentText = '';
+                    if (tossup.syncMap && tossup.syncMap.fragments) {
+                        const currentTime = audio.currentTime;
+                        tossup.syncMap.fragments.forEach((fragment, i) => {
+                            if (fragment.lines && fragment.lines.length > 0) {
+                                if (fragment.start <= currentTime) {
+                                    if (i > 0 && !(/^[.,!?;:)]/.test(fragment.lines[0]))) {
+                                        currentText += ' ';
+                                    }
+                                    currentText += fragment.lines[0];
+                                }
                             }
-                            fullText += fragment.lines[0];
-                        }
-                    });
+                        });
+                    }
+                    tossupTextElement.textContent = currentText;
                 }
-                tossupTextElement.textContent = fullText;
             }
         }
     });
@@ -856,24 +872,35 @@ document.addEventListener('DOMContentLoaded', () => {
     showTextToggle.addEventListener('change', () => {
         textDisplay.classList.toggle('hidden', !showTextToggle.checked);
         if (showTextToggle.checked && tossup) {
-            // Only start text sync if the audio is still playing
             if (!audio.paused) {
+                // Audio is playing - start text sync without power mark
                 tossup.startTextSync(tossupTextElement, audio);
-            } else if (tossup.displayedText) {
-                // If audio is paused, show the full text
-                let fullText = '';
-                if (tossup.syncMap && tossup.syncMap.fragments) {
-                    // Build the full text from all fragments
-                    tossup.syncMap.fragments.forEach((fragment, i) => {
-                        if (fragment.lines && fragment.lines.length > 0) {
-                            if (i > 0 && !(/^[.,!?;:)]/.test(fragment.lines[0]))) {
-                                fullText += ' ';
+            } else {
+                // Audio is paused
+                if (isBuzzed || audio.ended) {
+                    // If buzzed or audio ended, show text with buzz point and power mark
+                    const markedText = tossup.markBuzzPoint(audio.currentTime);
+                    if (markedText) {
+                        tossupTextElement.textContent = markedText;
+                    }
+                } else {
+                    // Show text up to current point without power mark
+                    let currentText = '';
+                    if (tossup.syncMap && tossup.syncMap.fragments) {
+                        const currentTime = audio.currentTime;
+                        tossup.syncMap.fragments.forEach((fragment, i) => {
+                            if (fragment.lines && fragment.lines.length > 0) {
+                                if (fragment.start <= currentTime) {
+                                    if (i > 0 && !(/^[.,!?;:)]/.test(fragment.lines[0]))) {
+                                        currentText += ' ';
+                                    }
+                                    currentText += fragment.lines[0];
+                                }
                             }
-                            fullText += fragment.lines[0];
-                        }
-                    });
+                        });
+                    }
+                    tossupTextElement.textContent = currentText;
                 }
-                tossupTextElement.textContent = fullText;
             }
         }
     });
@@ -903,14 +930,27 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Audio data loaded successfully');
     });
 
-    // Load settings when page loads
-    loadSettings();
+    // Add this inside your DOMContentLoaded event listener
+    document.querySelectorAll('.collapsible-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const targetId = header.getAttribute('data-target');
+            const content = document.getElementById(targetId);
 
-    // Save settings before page unloads
-    window.addEventListener('beforeunload', saveSettings);
+            // Toggle collapsed state
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
 
-    // Save settings when they change
-    document.querySelectorAll('.settings-input').forEach(input => {
-        input.addEventListener('change', saveSettings);
+            // Save state to localStorage
+            const isCollapsed = header.classList.contains('collapsed');
+            localStorage.setItem(targetId + '-collapsed', isCollapsed);
+        });
+
+        // Restore collapsed state from localStorage
+        const targetId = header.getAttribute('data-target');
+        const isCollapsed = localStorage.getItem(targetId + '-collapsed') === 'true';
+        if (isCollapsed) {
+            header.classList.add('collapsed');
+            document.getElementById(targetId).classList.add('collapsed');
+        }
     });
 });

@@ -150,93 +150,114 @@
             <div class="settings-scroll">
                 <div class="controls">
                     <div class="input-group">
-                        <label>Difficulty Levels:</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="1" class="settings-input"> 1 - Middle
-                                School
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="2" class="settings-input"> 2 - Easy High
-                                School
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="3" class="settings-input"> 3 - Regular
-                                High School
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="4" class="settings-input"> 4 - Hard High
-                                School
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="5" class="settings-input"> 5 - National
-                                High School
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="6" class="settings-input"> 6 - Easy
-                                College
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="7" class="settings-input"> 7 - Medium
-                                College
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="8" class="settings-input"> 8 - Regionals
-                                College
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="9" class="settings-input"> 9 - Nationals
-                                College
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="difficulty" value="10" class="settings-input"> 10 -
-                                Nationals College (Hard)
-                            </label>
+                        <div class="collapsible-header collapsed" data-target="difficulty-content">
+                            <label>Difficulty Levels:</label>
+                            <span class="collapse-icon">▼</span>
+                        </div>
+                        <div id="difficulty-content" class="collapsible-content collapsed">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="1" class="settings-input"> 1 -
+                                    Middle
+                                    School
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="2" class="settings-input"> 2 - Easy
+                                    High
+                                    School
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="3" class="settings-input"> 3 -
+                                    Regular
+                                    High School
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="4" class="settings-input"> 4 - Hard
+                                    High
+                                    School
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="5" class="settings-input"> 5 -
+                                    National
+                                    High School
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="6" class="settings-input"> 6 - Easy
+                                    College
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="7" class="settings-input"> 7 -
+                                    Medium
+                                    College
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="8" class="settings-input"> 8 -
+                                    Regionals
+                                    College
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="9" class="settings-input"> 9 -
+                                    Nationals
+                                    College
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="difficulty" value="10" class="settings-input"> 10 -
+                                    Hard Nationals College
+                                </label>
+                            </div>
                         </div>
                     </div>
                     <div class="input-group">
-                        <label>Subjects:</label>
-                        <div class="checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="science" class="settings-input"> Science
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="History" class="settings-input"> History
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Literature" class="settings-input">
-                                Literature
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Fine Arts" class="settings-input"> Fine
-                                Arts
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Geography" class="settings-input">
-                                Geography
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Religion" class="settings-input"> Religion
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Mythology" class="settings-input">
-                                Mythology
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Philosophy" class="settings-input">
-                                Philosophy
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Social Science" class="settings-input">
-                                Social Science
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Current Events" class="settings-input">
-                                Current Events
-                            </label>
-                            <label class="checkbox-label">
-                                <input type="checkbox" name="subject" value="Trash" class="settings-input"> Trash
-                            </label>
+                        <div class="collapsible-header collapsed" data-target="subjects-content">
+                            <label>Subjects:</label>
+                            <span class="collapse-icon">▼</span>
+                        </div>
+                        <div id="subjects-content" class="collapsible-content collapsed">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="science" class="settings-input">
+                                    Science
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="History" class="settings-input">
+                                    History
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Literature" class="settings-input">
+                                    Literature
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Fine Arts" class="settings-input"> Fine
+                                    Arts
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Geography" class="settings-input">
+                                    Geography
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Religion" class="settings-input">
+                                    Religion
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Mythology" class="settings-input">
+                                    Mythology
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Philosophy" class="settings-input">
+                                    Philosophy
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Social Science" class="settings-input">
+                                    Social Science
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Current Events" class="settings-input">
+                                    Current Events
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="subject" value="Trash" class="settings-input"> Trash
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>

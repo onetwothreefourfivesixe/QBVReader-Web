@@ -811,13 +811,7 @@ input:checked+.slider:before {
     }
 
     .shortcut-box {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        right: 10px;
-        width: auto;
-        padding: 10px;
-        background-color: rgba(255, 255, 255, 0.95);
+        display: none;
     }
 
     .shortcut-box p {
@@ -827,7 +821,7 @@ input:checked+.slider:before {
     /* Adjust button sizes for touch */
     button {
         padding: 12px 20px;
-        font-size: 16px;
+        font-size: 10px;
     }
 
     /* Make checkboxes and toggles easier to tap */

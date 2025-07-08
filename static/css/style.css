@@ -820,8 +820,37 @@ input:checked+.slider:before {
 
     /* Adjust button sizes for touch */
     button {
-        padding: 12px 20px;
-        font-size: 10px;
+        padding: 8px 12px;
+        /* Reduce padding */
+        font-size: 14px;
+        /* Reduce font size */
+    }
+
+    /* Update specific button styles */
+    .next-tossup-button,
+    .buzz-button,
+    .pause-button {
+        min-width: 100px;
+        /* Reduce minimum width */
+        padding: 8px 16px;
+        /* Adjust padding for these buttons */
+        font-size: 14px;
+        /* Adjust font size */
+    }
+
+    .submit-button {
+        padding: 8px 16px;
+        /* Adjust padding */
+        font-size: 14px;
+        /* Adjust font size */
+    }
+
+    .reset-button,
+    .toggle-correct-button {
+        padding: 6px 12px;
+        /* Smaller padding for these buttons */
+        font-size: 13px;
+        /* Slightly smaller font size */
     }
 
     /* Make checkboxes and toggles easier to tap */

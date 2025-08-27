@@ -893,6 +893,9 @@ input:checked+.slider:before {
     /* New rule: Stack main container sections vertically */
     .main-container {
         grid-template-columns: 1fr;
+        height: auto;
+        max-height: none;
+        overflow-y: auto;
     }
 }
 

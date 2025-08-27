@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QBVReader</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{{ url_for('landing') }}"><b>QBV</b>Reader</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('landing') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('play') }}">Play</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('install') }}">Install</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('changelog') }}">Changelog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('privacy_policy') }}">Privacy Policy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('terms_of_service') }}">Terms of Service</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://forms.gle/pro5Zvx4UDqc92Jd9" target="_blank">
+                            <i class="fas fa-bug"></i> Report Bug
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Version Cards -->
+    <div class="container mt-5">
+        <h2 class="text-center">Changelog</h2>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.6.1</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on August 11th, 2025</h6>
+                <ul>
+                    <li>Added new bonus game mode (similar to how scrimmages currently implement bonuses)</li>
+                    <li>All user points will be counted together, meaning all users in the game will be working together
+                    </li>
+                    <li>Also added new preset feature, which will allow users to create a save file for commonly played
+                        game sessions (game type and its settings) and load that preset for later use</li>
+                </ul>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.5.4</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on June 30, 2025</h6>
+                <ul>
+                    <li>Moved PPBs from individuals to teams if there are teams</li>
+                    <li>Now displays total bonus points individual user has gotten</li>
+                    <li>'buzz' will not be taken as the answer to bonuses</li>
+                    <li>Fixed error where joining other teams caused the bot to break</li>
+                    <li>Fixed error where tossups or bonuses would not time out</li>
+                </ul>
+            </div>
+        </div>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.5.2</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on May 3, 2025</h6>
+                <ul>
+                    <li>Added the option to show or hide tossup text while reading</li>
+                    <li>Added bolding to the powermarked section of tossups</li>
+                    <li>Improved score display to be clearer</li>
+                    <li>Players on the same team as the player who gets the tossup can now answer bonuses</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.5.0</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on March 15, 2025</h6>
+                <ul>
+                    <li>Created new scrimmage mode, which allows users to read questions (currently only tossups for
+                        now, bonuses will be coming later) from a specific packet from a specific set, with support for
+                        custom packets planned.</li>
+                    <li>The ability to create teams is now available in both tossup and scrimmages, which keeps track of
+                        total team stats.</li>
+                    <li>Fixed issue where voice client disconnect prevented the end-to-game sessions, users now will be
+                        able to run '!end' and not face an error.</li>
+                    <li>Fixed issue with text updating, where the question text would update between two separate
+                        discord messages.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.4.2</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on February 17, 2025</h6>
+                <ul>
+                    <li>Added ability to change reading speed.</li>
+                    <li>Removed the power mark from being read aloud or printed in the text.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.4.0</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on January 31, 2025</h6>
+                <ul>
+                    <li>Added study mode (the bot automatically moves onto the next tossup after the previous one
+                        finishes).</li>
+                    <li>Added the ability to select subcategories for tossups.</li>
+                    <li>Buzzing in now has a ten-second timeout (so can't stall on buzzes anymore).</li>
+                    <li>Changed voice to a more humanlike model.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.3.2</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on January 19, 2025</h6>
+                <ul>
+                    <li>Added multiplayer functionality, multiple people can play and compete on the same tossups.
+                    </li>
+                    <li>Added the ability to toggle being able to buzz multiple times on the same question.</li>
+                    <li>Fixed bug where all correct buzzes were treated as powers.</li>
+                    <li>Added more visuals to the category selection.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.3.1</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on January 15, 2025</h6>
+                <ul>
+                    <li>Added delay to buttons from being interacted with until they are fully loaded.</li>
+                    <li>Bot will now print text in sync with the read tossup.</li>
+                    <li>Improved labels for difficulties.</li>
+                    <li>Player score now broken down into powers, tens, and negs, along with the total score.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.3.0</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on December 13, 2024</h6>
+                <ul>
+                    <li>Created fleshed out UI system for game setup.</li>
+                    <li>Added a buzz button to ease use for mobile users.</li>
+                    <li>Added buttons at the end of each tossup to run different commands.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.2.0</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on October 10, 2024</h6>
+                <ul>
+                    <li>Modified buzzing and answer system to accept plaintext answers.</li>
+                    <li>Redid file system so multiple game sessions can be run.</li>
+                    <li>Added logging.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Version 1.0.0</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Released on August 28, 2024</h6>
+                <ul>
+                    <li>Able to read aloud tossups and accept buzzes and answers.</li>
+                    <li>All command-based, including buzzes and answers.</li>
+                    <li>Starting games require categories and difficulties to be written into the command.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white text-center py-3">
+        <p>© 2025 QBVReader. All rights reserved.</p>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

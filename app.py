@@ -42,9 +42,29 @@ except Exception as e:
     texttospeech_client = None
 
 @app.route('/')
-def home():
+def landing():
+    return render_template('landing.html')
+
+@app.route('/play')
+def play():
     get_or_create_user_id()
     return render_template('index.html')
+
+@app.route('/install')
+def install():
+    return render_template('install.html')
+
+@app.route('/changelog')
+def changelog():
+    return render_template('changelog.html')
+
+@app.route('/privacy-policy')
+def privacy_policy():
+    return render_template('privacyPolicy.html')
+
+@app.route('/terms-of-service')
+def terms_of_service():
+    return render_template('termsOfService.html')
 
 @app.route('/about')
 def about():

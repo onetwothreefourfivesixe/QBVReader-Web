@@ -1,0 +1,1056 @@
+body {
+    margin: 0;
+    padding: 0;
+    /* font-family: Arial, sans-serif; */
+    line-height: 1.6;
+    background-color: #f5f5f5;
+}
+
+/* Overall container styling (if needed) */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+input[type="text"],
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.navbar-brand {
+    color: #38b7ff
+}
+
+/* Saved texts */
+.saved-texts {
+    margin-top: 30px;
+}
+
+.saved-text {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    border: 1px solid #eee;
+}
+
+.saved-text h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+}
+
+.saved-text p {
+    margin: 0 0 10px 0;
+    color: #666;
+}
+
+.saved-text small {
+    color: #888;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.saved-text button {
+    background-color: #f44336;
+}
+
+.saved-text button:hover {
+    background-color: #da190b;
+}
+
+/* Audio player styles */
+audio {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+audio::-webkit-media-controls-panel {
+    background-color: #f5f5f5;
+}
+
+audio::-webkit-media-controls-play-button,
+audio::-webkit-media-controls-volume-slider,
+audio::-webkit-media-controls-mute-button,
+audio::-webkit-media-controls-timeline {
+    cursor: pointer;
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Error message */
+.error-message {
+    color: #f44336;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #ffebee;
+    border-radius: 4px;
+    display: none;
+}
+
+/* Multiselect styles */
+.input-group select[multiple] {
+    height: 150px;
+    padding: 5px;
+}
+
+.input-group select[multiple] option {
+    padding: 5px;
+}
+
+.input-group select[multiple] option:checked {
+    background-color: #007bff;
+    color: white;
+}
+
+/* Checkbox groups */
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.9rem;
+}
+
+.checkbox-label input[type="checkbox"] {
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Tossup metadata */
+.tossup-metadata {
+    background-color: #f0f7ff;
+    border-radius: 4px;
+    border: 1px solid #cce0ff;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+
+.tossup-metadata.hidden {
+    display: none;
+}
+
+.set-name {
+    font-style: italic;
+    color: #666;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.answer {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #2c3e50;
+    margin: 0;
+}
+
+.answer b {
+    font-weight: bold;
+}
+
+.answer u {
+    text-decoration: underline;
+}
+
+.answer b u {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.answer i,
+.answer em {
+    font-style: italic;
+}
+
+.answer strong {
+    font-weight: bold;
+}
+
+.answer sub {
+    vertical-align: sub;
+    font-size: 0.8em;
+}
+
+.answer sup {
+    vertical-align: super;
+    font-size: 0.8em;
+}
+
+.answer a {
+    color: #2196F3;
+    text-decoration: none;
+}
+
+.answer a:hover {
+    text-decoration: underline;
+}
+
+/* Text display */
+.text-display {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.text-display.hidden {
+    display: none;
+}
+
+#tossup-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    min-height: 100px;
+}
+
+/* Hide elements with .hidden */
+.hidden {
+    display: none !important;
+}
+
+/* Custom audio controls */
+.custom-audio-controls {
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background-color: #f0f0f0;
+    border-radius: 2px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background-color: #4CAF50;
+    transition: width 0.1s linear;
+}
+
+.progress-container.hidden {
+    display: none;
+}
+
+/* Toggle switch */
+.text-display-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:checked+.slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Existing layout styles */
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.input-group label {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.input-group select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+}
+
+.audio-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.button-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.score-display {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.next-tossup-button,
+.buzz-button,
+.pause-button {
+    flex: 0 1 auto;
+    min-width: 120px;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.next-tossup-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.buzz-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.buzz-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.pause-button {
+    background-color: #2196F3;
+    color: white;
+}
+
+.pause-button:hover {
+    background-color: #1b73bb;
+}
+
+.pause-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+/* Style for when the button shows Resume */
+.pause-button.resumed {
+    background-color: #4CAF50;
+    /* Green when showing Resume */
+    color: white;
+}
+
+.pause-button.resumed:hover {
+    background-color: #45a049;
+}
+
+.answer-input-container {
+    margin-top: auto;
+    display: flex;
+    gap: 1rem;
+}
+
+.answer-input-container input {
+    flex: 1;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.submit-button {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+}
+
+.submit-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+    background-color: #45a049;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    /* Reduced from 50px */
+    background-color: #333;
+    color: white;
+    display: flex;
+    padding: 0.5rem 0;
+    /* Reduced padding */
+}
+
+.navbar-logo {
+    height: 30px;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.navbar-logo img {
+    height: 100%;
+    width: auto;
+}
+
+.nav-link {
+    font-size: 1.1rem;
+    transition: color 0.3s ease;
+    padding: 0.25rem 1rem;
+    /* Reduced padding */
+}
+
+/* Main container grid layout */
+.main-container {
+    display: grid;
+    grid-template-columns: 250px 1fr 250px;
+    gap: 1rem;
+    padding: 1rem;
+    height: calc(100vh - 60px);
+    /* Adjust based on navbar height */
+    max-height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+/* Game settings section (blue) */
+.game-settings,
+.question-settings {
+    overflow: hidden;
+    /* Prevent outer container scroll */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Take full height of grid area */
+    background-color: var(--section-bg);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.settings-scroll {
+    flex: 1;
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    padding-right: 10px;
+    /* Space for scrollbar */
+    margin-right: -10px;
+    /* Compensate for padding */
+}
+
+/* Customize scrollbar appearance */
+.settings-scroll::-webkit-scrollbar {
+    width: 8px;
+}
+
+.settings-scroll::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.settings-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.settings-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Ensure content within settings is properly spaced */
+.settings-group {
+    margin-bottom: 1rem;
+}
+
+.setting-item {
+    margin-bottom: 0.8rem;
+}
+
+/* Timer display */
+.timer-display {
+    position: fixed;
+    top: 40px;
+    left: 0;
+    right: 0;
+    background: white;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.timer-display.active {
+    display: block;
+}
+
+.buzz-timer,
+.answer-timer {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.timer-label {
+    margin-right: 10px;
+}
+
+.timer-value {
+    color: #f44336;
+}
+
+.buzz-timer.hidden,
+.answer-timer.hidden {
+    display: none;
+}
+
+/* Score display */
+.score-display {
+    display: flex;
+    gap: 1rem;
+    margin-left: auto;
+}
+
+.score-item {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    background-color: #f5f5f5;
+}
+
+.score-label {
+    font-weight: bold;
+    color: #333;
+}
+
+.score-value {
+    font-family: monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    min-width: 1.5rem;
+    text-align: right;
+}
+
+#powerScore {
+    color: #4CAF50;
+}
+
+#tenScore {
+    color: #2196F3;
+}
+
+#negScore {
+    color: #f44336;
+}
+
+#totalScore {
+    color: #333;
+    font-weight: bold;
+}
+
+/* Row styling */
+.row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.tossup-text-container {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.text-display {
+    margin-bottom: 10px;
+}
+
+.tossup-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 0;
+}
+
+.answer-display {
+    border-top: 1px solid #dee2e6;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+
+.shortcut-box {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    min-width: 150px;
+    width: 200px;
+}
+
+.shortcut-box p {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Add these new styles */
+.collapsible-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+.collapsible-header:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.collapsible-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.collapsible-content.collapsed {
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.collapse-icon {
+    transition: transform 0.3s ease;
+}
+
+.collapsible-header.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+/* Existing input-group style */
+.input-group {
+    margin-bottom: 1.5rem;
+    background-color: var(--section-bg);
+    border-radius: 8px;
+    padding: 0.5rem;
+}
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .game-settings,
+    .question-settings {
+        width: 100%;
+        max-height: 200px;
+    }
+
+    .tossup-area {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .tossup-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .score-display {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .score-item {
+        flex: 1;
+        text-align: center;
+    }
+
+    .tossup-text-container {
+        padding: 15px;
+    }
+
+    .tossup-text {
+        font-size: 1rem;
+        line-height: 1.4;
+    }
+
+    .answer-input-container {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .answer-input-container input {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .answer-input-container button {
+        width: 100%;
+    }
+
+    .shortcut-box {
+        display: none;
+    }
+
+    .shortcut-box p {
+        font-size: 12px;
+    }
+
+    /* Adjust button sizes for touch */
+    button {
+        padding: 8px 12px;
+        /* Reduce padding */
+        font-size: 14px;
+        /* Reduce font size */
+    }
+
+    /* Update specific button styles */
+    .next-tossup-button,
+    .buzz-button,
+    .pause-button {
+        min-width: 100px;
+        /* Reduce minimum width */
+        padding: 8px 16px;
+        /* Adjust padding for these buttons */
+        font-size: 14px;
+        /* Adjust font size */
+    }
+
+    .submit-button {
+        padding: 8px 16px;
+        /* Adjust padding */
+        font-size: 14px;
+        /* Adjust font size */
+    }
+
+    .reset-button,
+    .toggle-correct-button {
+        padding: 6px 12px;
+        /* Smaller padding for these buttons */
+        font-size: 13px;
+        /* Slightly smaller font size */
+    }
+
+    /* Make checkboxes and toggles easier to tap */
+    .checkbox-label,
+    .switch {
+        padding: 8px 0;
+    }
+
+    /* Adjust progress bar for mobile */
+    .progress-container {
+        height: 8px;
+    }
+
+    /* Make timers more visible on mobile */
+    .buzz-timer,
+    .answer-timer {
+        font-size: 1.2rem;
+        padding: 5px 10px;
+    }
+
+    /* Adjust settings groups for mobile */
+    .settings-group {
+        padding: 10px;
+    }
+
+    .setting-item {
+        margin: 8px 0;
+    }
+
+    /* Make answer display more readable on mobile */
+    .answer {
+        font-size: 1.1rem;
+        padding: 10px;
+    }
+
+    /* New rule: Stack main container sections vertically */
+    .main-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Additional styles for very small screens */
+@media screen and (max-width: 480px) {
+    .score-display {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .score-item {
+        flex: 1 1 40%;
+        min-width: 100px;
+    }
+}
+
+/* Prevent text selection on buttons for better mobile experience */
+button {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Improve touch feedback */
+button:active {
+    transform: scale(0.98);
+}
+
+/* Make sure the app takes up the full viewport height on mobile */
+html,
+body {
+    height: 100%;
+    overflow-x: hidden;
+}
+
+/* Prevent horizontal scrolling */
+.container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Reading Speed Slider Styles */
+#reading-speed {
+    width: 100%;
+    margin: 10px 0;
+    height: 8px;
+    background: #ddd;
+    border-radius: 4px;
+    outline: none;
+}
+
+#reading-speed::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#reading-speed::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #4CAF50;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+#reading-speed-value {
+    display: inline-block;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Mobile adjustments for reading speed slider */
+@media screen and (max-width: 768px) {
+    #reading-speed {
+        height: 6px;
+    }
+
+    #reading-speed::-webkit-slider-thumb {
+        width: 18px;
+        height: 18px;
+    }
+
+    #reading-speed::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* Toggle correct button */
+.toggle-correct-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #666;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.toggle-correct-button:hover {
+    background-color: #888;
+}
+
+.toggle-correct-button.hidden {
+    display: none;
+}
+
+.toggle-correct-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.toggle-correct-button.correct {
+    background-color: #4CAF50;
+    /* Green */
+}
+
+.toggle-correct-button.incorrect {
+    background-color: #f44336;
+    /* Red */
+}
+
+/* Notification styles */
+.notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.notification {
+    background-color: #333;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.notification.hidden {
+    display: none;
+}

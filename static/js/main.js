@@ -33,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalScoreElement = document.getElementById('totalScore');
 
     let tossup = null;
-    let isPlaying = false;
     let isBuzzed = false;
     let isCorrect = false;
     let isPaused = false;
@@ -102,8 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Add power mark only after tossup has ended
             if (tossup.powerMarkIndex !== undefined && tossup.powerMarkIndex >= 0) {
                 markedText = tossup.addPowerMark(markedText);
+                markedText = "<b>" + markedText.slice(0, tossup.powerMarkIndex) + "</b>" + markedText.slice(tossup.powerMarkIndex);
+                console.log("this is working");
             }
-            tossupTextElement.textContent = markedText;
+            tossupTextElement.innerHTML = markedText;
         }
 
         toggleCorrectButton.classList.remove('hidden');
@@ -674,12 +675,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 tens: parseInt(document.getElementById('tenScore').textContent),
                 negs: parseInt(document.getElementById('negScore').textContent),
                 total: parseInt(document.getElementById('totalScore').textContent),
-                goals: {
-                    powers: parseInt(document.getElementById('powerGoal').value) || 0,
-                    tens: parseInt(document.getElementById('tenGoal').value) || 0,
-                    negs: parseInt(document.getElementById('negGoal').value) || 0,
-                    total: parseInt(document.getElementById('totalGoal').value) || 0
-                }
             };
 
             const response = await fetch('/save-settings', {
@@ -720,13 +715,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('show-text-toggle').checked = data.settings.showText;
                 }
 
-                // Load goals
-                if (data.settings.goals) {
-                    document.getElementById('powerGoal').value = data.settings.goals.powers || 0;
-                    document.getElementById('tenGoal').value = data.settings.goals.tens || 0;
-                    document.getElementById('negGoal').value = data.settings.goals.negs || 0;
-                    document.getElementById('totalGoal').value = data.settings.goals.total || 0;
-                }
             }
 
             if (data.success && data.scores) {
@@ -747,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getSelectedSubjects() {
-        return Array.from(document.querySelectorAll('input[name="subject"]:checked"'))
+        return Array.from(document.querySelectorAll('input[name="subject"]:checked'))
             .map(cb => cb.value);
     }
 
@@ -761,27 +749,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('input[name="subject"]').forEach(cb => {
             cb.checked = subjects.includes(cb.value);
         });
-    }
-
-    // When showing the buzz timer
-    function showBuzzTimer() {
-        document.querySelector('.timer-display').classList.add('active');
-        document.querySelector('.buzz-timer').classList.remove('hidden');
-        // ...rest of your timer code
-    }
-
-    // When showing the answer timer
-    function showAnswerTimer() {
-        document.querySelector('.timer-display').classList.add('active');
-        document.querySelector('.answer-timer').classList.remove('hidden');
-        // ...rest of your timer code
-    }
-
-    // When hiding the timers
-    function hideTimers() {
-        document.querySelector('.timer-display').classList.remove('active');
-        document.querySelector('.buzz-timer').classList.add('hidden');
-        document.querySelector('.answer-timer').classList.add('hidden');
     }
 
     function showNotification(message, duration = 3000) {

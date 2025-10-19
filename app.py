@@ -210,12 +210,6 @@ def save_settings():
             'subjects': data.get('subjects', []),
             'readingSpeed': data.get('readingSpeed', 1.0),
             'showText': data.get('showText', True),
-            'goals': data.get('goals', {
-                'powers': 0,
-                'tens': 0,
-                'negs': 0,
-                'total': 0
-            })
         }
         session['scores'] = {
             'powers': data.get('powers', 0),
@@ -258,4 +252,4 @@ if __name__ == '__main__':
     pass
     port = int(os.getenv('PORT', 5000))
     host = os.getenv('HOST', '0.0.0.0')
-    app.run(host=host, port=port)#, debug=True)
+    app.run(host=host, port=port, debug=True)

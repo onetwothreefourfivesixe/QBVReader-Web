@@ -2,6 +2,16 @@ import re
 import urllib.parse
 import requests
 
+def is_empty(val):
+    if val is None:
+        return True
+    if isinstance(val, str) and val.strip() in {"", "[]", "None"}:
+        return True
+    if isinstance(val, (list, tuple, set, dict)) and len(val) == 0:
+        return True
+    return False
+
+
 def fetchTossup(difficulties='', categories='', subcategories=''):
     url = 'https://www.qbreader.org/api/random-tossup'
     params = {
@@ -14,6 +24,7 @@ def fetchTossup(difficulties='', categories='', subcategories=''):
         'powermarkOnly': True,
         'standardOnly': True
     }
+    params = {k: v for k, v in params.items() if not is_empty(v)}
     encoded_params = urllib.parse.urlencode(params, safe=",")
 
     try:
@@ -21,11 +32,13 @@ def fetchTossup(difficulties='', categories='', subcategories=''):
         response.raise_for_status()
         data = response.json()
         tossup = data['tossups'][0]
-        return tossup['question_sanitized'], tossup['answer_sanitized'], tossup['answer'], tossup['set']['name']
+        
+        original_text = tossup['question_sanitized']
+
+        return original_text, tossup['answer_sanitized'], tossup['answer'], tossup['set']['name']
     except requests.exceptions.RequestException as e:
         print(f"Error fetching tossup: {e}")
         return None
-
 def checkTossupAnswer(answerLine: str='', givenAnswer: str=''):
     url = 'https://www.qbreader.org/api/check-answer'
     

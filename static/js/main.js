@@ -332,6 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             isGenerating = true;
             nextButton.disabled = true;  // Disable button while generating
+            showPersistentNotification('Generating tossup...');
 
             // Reset pause state if paused
             if (isPaused) {
@@ -402,6 +403,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Update UI
                 if (success) {
+                    hideNotification();
                     console.log('Updating UI with new tossup');
                     updateMetadataAndText();
 
@@ -459,9 +461,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.error('Error in audio playback:', error);
                         alert('Failed to play audio. Please check your browser settings and try again.');
                     }
+                } else {
+                    hideNotification();
+                    showNotification('No tossups found for the selected criteria. Please try different settings.', 5000);
                 }
             } catch (error) {
                 console.error('Error in next button handler:', error);
+                hideNotification();
                 alert('Failed to generate tossup. Please try again.');
             } finally {
                 isGenerating = false;
@@ -469,6 +475,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error('Error in handleNextTossup:', error);
+            hideNotification();
             alert('An error occurred while generating the tossup. Please try again.');
         }
     }
@@ -751,16 +758,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function showNotification(message, duration = 3000) {
-        const notification = document.querySelector('.notification');
-        const messageElement = notification.querySelector('.notification-message');
+    const notification = document.querySelector('.notification');
+    const messageElement = notification.querySelector('.notification-message');
+
+    function showPersistentNotification(message) {
         messageElement.textContent = message;
         notification.classList.remove('hidden');
         notification.classList.add('show');
+    }
 
+    function hideNotification() {
+        notification.classList.remove('show');
+        setTimeout(() => notification.classList.add('hidden'), 300);
+    }
+
+    function showNotification(message, duration = 3000) {
+        showPersistentNotification(message);
         setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => notification.classList.add('hidden'), 300);
+            hideNotification();
         }, duration);
     }
 

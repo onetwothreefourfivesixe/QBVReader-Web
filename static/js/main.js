@@ -91,6 +91,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to end the tossup (called when time runs out or answer is correct)
     function endTossup() {
+        // Stop text syncing to clean up event listeners
+        if (tossup) {
+            tossup.stopTextSync(audio);
+        }
+
         // Show both text and answer
         textDisplay.classList.remove('hidden');
         document.querySelector('.answer-display').classList.remove('hidden');
@@ -346,6 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Clear any existing tossup
             if (tossup) {
+                tossup.stopTextSync(audio);
                 tossup.cleanup();
             }
 
@@ -369,12 +375,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitAnswer.disabled = true;
                 isBuzzed = false;
                 isCorrect = false;
-
-                // Clean up previous tossup if it exists
-                if (tossup) {
-                    console.log('Cleaning up previous tossup');
-                    tossup.cleanup();
-                }
 
                 // Clear the text display and reset UI state
                 tossupTextElement.textContent = '';

@@ -132,6 +132,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to start the buzz timer
     function startBuzzTimer() {
+        // Guard against duplicate timers: clear any existing buzz timer first
+        // so we never lose the reference to a running interval (which would
+        // orphan it and cause it to keep firing endTossup forever).
+        if (buzzTimerInterval) {
+            clearInterval(buzzTimerInterval);
+            buzzTimerInterval = null;
+        }
+
         let timeLeft = 8;
         buzzTimerValue.textContent = timeLeft;
 
@@ -146,6 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (timeLeft <= 0) {
                 clearInterval(buzzTimerInterval);
+                buzzTimerInterval = null;
                 // Hide both timer display and buzz timer
                 document.querySelector('.timer-display').classList.remove('active');
                 document.querySelector('.timer-display').classList.add('hidden');
@@ -161,6 +170,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to start the answer timer
     function startAnswerTimer() {
+        // Guard against duplicate timers (see startBuzzTimer).
+        if (answerTimerInterval) {
+            clearInterval(answerTimerInterval);
+            answerTimerInterval = null;
+        }
+
         let timeLeft = 10;
         answerTimerValue.textContent = timeLeft;
 
@@ -175,6 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (timeLeft <= 0) {
                 clearInterval(answerTimerInterval);
+                answerTimerInterval = null;
                 // Hide both timer display and answer timer
                 document.querySelector('.timer-display').classList.remove('active');
                 document.querySelector('.timer-display').classList.add('hidden');
@@ -806,110 +822,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if ((e.key === 'n' || e.key === 'N') && !isInputFocused() && !isGenerating) {
             handleNextTossup();
         }
-    });
-
-    // Audio event listeners
-    audio.addEventListener('play', () => {
-        buzzButton.disabled = false;
-        if (tossup && showTextToggle.checked) {
-            tossup.startTextSync(tossupTextElement, audio);
-        }
-    });
-
-    // audio.addEventListener('pause', () => {
-    //     if (!isBuzzed) {
-    //         buzzButton.disabled = true;
-    //     }
-    // });
-
-    audio.addEventListener('timeupdate', () => {
-        if (audio.duration) {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = `${progress}%`;
-        }
-    });
-
-    audio.addEventListener('seeking', () => {
-        if (tossup && showTextToggle.checked) {
-            tossup.startTextSync(tossupTextElement, audio);
-        }
-    });
-
-    audio.addEventListener('ended', () => {
-        // Disable pause button when audio ends
-        pauseButton.disabled = true;
-        // Start 8-second buzz timer when tossup ends
-        startBuzzTimer();
-    });
-
-    // progressContainer.addEventListener('click', (e) => {
-    //     if (!isBuzzed) {
-    //         const rect = progressContainer.getBoundingClientRect();
-    //         const pos = (e.clientX - rect.left) / rect.width;
-    //         audio.currentTime = pos * audio.duration;
-    //     }
-    // });
-
-    // Text toggle event listener
-    showTextToggle.addEventListener('change', () => {
-        textDisplay.classList.toggle('hidden', !showTextToggle.checked);
-        if (showTextToggle.checked && tossup) {
-            if (!audio.paused) {
-                // Audio is playing - start text sync without power mark
-                tossup.startTextSync(tossupTextElement, audio);
-            } else {
-                // Audio is paused
-                if (isBuzzed || audio.ended) {
-                    // If buzzed or audio ended, show text with buzz point and power mark
-                    const markedText = tossup.markBuzzPoint(audio.currentTime);
-                    if (markedText) {
-                        tossupTextElement.textContent = markedText;
-                    }
-                } else {
-                    // Show text up to current point without power mark
-                    let currentText = '';
-                    if (tossup.syncMap && tossup.syncMap.fragments) {
-                        const currentTime = audio.currentTime;
-                        tossup.syncMap.fragments.forEach((fragment, i) => {
-                            if (fragment.lines && fragment.lines.length > 0) {
-                                if (fragment.start <= currentTime) {
-                                    if (i > 0 && !(/^[.,!?;:)]/.test(fragment.lines[0]))) {
-                                        currentText += ' ';
-                                    }
-                                    currentText += fragment.lines[0];
-                                }
-                            }
-                        });
-                    }
-                    tossupTextElement.textContent = currentText;
-                }
-            }
-        }
-    });
-
-    // Add keyboard event listener
-    document.addEventListener('keydown', (event) => {
-        // Only handle shortcuts if not in answer input
-        if (document.activeElement !== answerInput) {
-            if (event.key === 'n' || event.key === 'N') {
-                nextButton.click();
-            } else if (event.key === ' ') {
-                // Prevent spacebar from scrolling the page
-                event.preventDefault();
-                buzzButton.click();
-            }
-        }
-    });
-
-    // Add error event listener for audio
-    audio.addEventListener('error', (e) => {
-        console.error('Audio error:', e);
-        alert('Error loading audio. Please try again.');
-    });
-
-    // Add loadeddata event listener for audio
-    audio.addEventListener('loadeddata', () => {
-        console.log('Audio data loaded successfully');
     });
 
     // Add this inside your DOMContentLoaded event listener

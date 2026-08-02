@@ -4,7 +4,7 @@ import os
 from google.cloud import texttospeech
 import logging
 from util.fetchQuestions import checkTossupAnswer
-from util.util import clear_user_folder, generate_tossup_files, get_file_paths, get_or_create_user_id, get_user_folder, read_sync_map
+from util.util import clear_user_folder, create_tossup_folder, generate_tossup_files, get_file_paths, get_or_create_user_id, get_user_folder, prune_tossup_folders, read_sync_map, sweep_stale_sessions
 from datetime import timedelta
 
 # Configure logging
@@ -95,28 +95,48 @@ def generate_tossup():
         os.makedirs(user_folder, exist_ok=True)
         
         logger.info(f"Generating tossup for user {user_id} with difficulties {difficulties_str} and subjects {subjects_str}")
-        
-        # Clear existing files
-        clear_user_folder(user_folder)
-        
+
+        # Each tossup gets its own folder so the ones already read this session
+        # stay playable from the history list instead of being overwritten.
+        tossup_id, tossup_folder = create_tossup_folder(user_folder)
+
         # Get file paths
-        file_paths = get_file_paths(user_folder)
-        
+        file_paths = get_file_paths(tossup_folder)
+
         # Generate tossup files
         tossup, answerLine, setName, power_mark_pos = generate_tossup_files(file_paths, texttospeech_client, difficulties_str, subjects_str, readingSpeed)
-        
-        # Read sync map
+
+        # Read sync map. Without it the client has no word timings and cannot
+        # reveal the tossup text as it is read, so make the failure visible.
         sync_map = read_sync_map(file_paths['sync'])
-        
+        if not sync_map.get('fragments'):
+            logger.warning(
+                f"No sync map produced for tossup {tossup_id}; the text will only "
+                f"be shown once the tossup ends"
+            )
+
+        # Drop the oldest tossups once the session is past the retention cap
+        expired_ids = prune_tossup_folders(user_folder)
+        if expired_ids:
+            logger.info(f"Pruned {len(expired_ids)} expired tossup folders for user {user_id}")
+
+        # Reap folders left behind by sessions that were closed without notice
+        swept = sweep_stale_sessions(app.config['UPLOAD_FOLDER'], keep_user_id=user_id)
+        if swept:
+            logger.info(f"Swept {swept} stale session folders")
+
         # Return the relative path for the audio file
-        relative_path = f"/static/audio/{user_id}/audio.mp3"
+        relative_path = f"/static/audio/{user_id}/{tossup_id}/audio.mp3"
         return jsonify({
             'success': True,
+            'tossupId': tossup_id,
             'audioPath': relative_path,
+            'text': tossup,
             'answer': answerLine,
             'setName': setName,
             'syncMap': sync_map,
-            'powerMarkPos': power_mark_pos
+            'powerMarkPos': power_mark_pos,
+            'expiredTossupIds': expired_ids
         })
         
     except Exception as e:

@@ -1,36 +1,65 @@
 import { Tossup } from './tossup.js';
+import { TossupHistory } from './history.js';
+import { StorageManager } from './storage.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Playback elements
     const audio = document.getElementById('audio');
-    const nextButton = document.getElementById('nextTossup');
-    const showTextToggle = document.getElementById('show-text-toggle');
-    const allowRebuzzToggle = document.getElementById('allow-rebuzz-toggle');
-    const textDisplay = document.querySelector('.text-display');
-    const tossupTextElement = document.querySelector('.tossup-text');
+    const pauseButton = document.getElementById('pauseButton');
+    const progressContainer = document.querySelector('.progress-container');
+    const progressBar = document.querySelector('.progress-bar');
+
+    // Tossup metadata and text elements
+    const tossupMetadata = document.querySelector('.tossup-metadata');
     const setNameElement = document.querySelector('.set-name');
     const answerElement = document.getElementById('answer');
-    const tossupMetadata = document.querySelector('.tossup-metadata');
+    const textDisplay = document.querySelector('.text-display');
+    const tossupTextElement = document.querySelector('.tossup-text');
     const textToggleContainer = document.querySelector('.text-display-controls');
+
+    // Buzz and answer elements
     const buzzButton = document.getElementById('buzzButton');
     const answerInput = document.getElementById('answerInput');
     const submitAnswer = document.getElementById('submitAnswer');
-    const progressContainer = document.querySelector('.progress-container');
-    const progressBar = document.querySelector('.progress-bar');
+    const toggleCorrectButton = document.getElementById('toggleCorrect');
+
+    // Timer elements
     const buzzTimer = document.querySelector('.buzz-timer');
-    const answerTimer = document.querySelector('.answer-timer');
     const buzzTimerValue = buzzTimer.querySelector('.timer-value');
+    const answerTimer = document.querySelector('.answer-timer');
     const answerTimerValue = answerTimer.querySelector('.timer-value');
+
+    // Settings elements
+    const showTextToggle = document.getElementById('show-text-toggle');
+    const allowRebuzzToggle = document.getElementById('allow-rebuzz-toggle');
     const readingSpeedSlider = document.getElementById('reading-speed');
     const readingSpeedValue = document.getElementById('reading-speed-value');
-    const toggleCorrectButton = document.getElementById('toggleCorrect');
-    const pauseButton = document.getElementById('pauseButton');
-    const resetScoresButton = document.getElementById('resetScores');
 
     // Score elements
     const powerScoreElement = document.getElementById('powerScore');
     const tenScoreElement = document.getElementById('tenScore');
     const negScoreElement = document.getElementById('negScore');
     const totalScoreElement = document.getElementById('totalScore');
+    const resetScoresButton = document.getElementById('resetScores');
+
+    // Notification elements
+    const notification = document.querySelector('.notification');
+    const messageElement = notification.querySelector('.notification-message');
+
+    // Session controls
+    const nextButton = document.getElementById('nextTossup');
+
+    // Previously read tossups
+    const tossupHistory = new TossupHistory({
+        list: document.querySelector('.history-list'),
+        count: document.querySelector('.history-count'),
+        empty: document.querySelector('.history-empty'),
+        clearButton: document.getElementById('clearHistory')
+    });
+
+    // Drops the session's temporary audio once the tab has been idle for long
+    // enough; the history list is cleared with it so the two stay in step.
+    new StorageManager({ onCleanup: () => tossupHistory.clear() });
 
     let tossup = null;
     let isBuzzed = false;
@@ -40,6 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let buzzTimerInterval = null;
     let answerTimerInterval = null;
     let lastBuzzType = null; // 'power', 'regular', or 'neg'
+    let lastUserAnswer = '';
+    let lastMarkedText = '';
+    const recordedTossupIds = new Set();
 
     // Score tracking
     let scores = {
@@ -50,6 +82,462 @@ document.addEventListener('DOMContentLoaded', () => {
             return (this.powers * 15) + (this.tens * 10) - (this.negs * 5);
         }
     };
+
+    // ------------------------------------------------------------------
+    // Event listeners
+    // ------------------------------------------------------------------
+
+    // Tossup generation
+    nextButton.addEventListener('click', handleNextTossup);
+    document.addEventListener('keydown', (e) => {
+        if ((e.key === 'n' || e.key === 'N') && !isInputFocused() && !isGenerating) {
+            handleNextTossup();
+        }
+    });
+
+    // Buzzing and answering
+    buzzButton.addEventListener('click', handleBuzz);
+    submitAnswer.addEventListener('click', handleAnswerSubmission);
+    answerInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            handleAnswerSubmission();
+        }
+    });
+
+    // Pause / resume
+    pauseButton.addEventListener('click', handlePause);
+    document.addEventListener('keydown', (e) => {
+        if (e.key.toLowerCase() === 'p' && !e.repeat && !isInputFocused()) {
+            handlePause();
+        }
+    });
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (event) => {
+        // Skip while typing an answer, or while the focus is on a history
+        // replay player where space/enter mean something else
+        if (isInputFocused()) return;
+
+        if (event.key === 'n' || event.key === 'N') {
+            nextButton.click();
+        } else if (event.key === ' ') {
+            // Prevent spacebar from scrolling the page
+            event.preventDefault();
+            buzzButton.click();
+        }
+    });
+
+    // Audio event listeners
+    audio.addEventListener('play', () => {
+        buzzButton.disabled = false;
+        if (tossup && showTextToggle.checked) {
+            tossup.startTextSync(tossupTextElement, audio);
+        }
+    });
+
+    // audio.addEventListener('pause', () => {
+    //     if (!isBuzzed) {
+    //         buzzButton.disabled = true;
+    //     }
+    // });
+
+    audio.addEventListener('timeupdate', () => {
+        if (audio.duration) {
+            const progress = (audio.currentTime / audio.duration) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+    });
+
+    audio.addEventListener('seeking', () => {
+        if (tossup && showTextToggle.checked) {
+            tossup.startTextSync(tossupTextElement, audio);
+        }
+    });
+
+    audio.addEventListener('ended', () => {
+        // Disable pause button when audio ends
+        pauseButton.disabled = true;
+        // Start 8-second buzz timer when tossup ends
+        startBuzzTimer();
+    });
+
+    // Add error event listener for audio
+    audio.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        alert('Error loading audio. Please try again.');
+    });
+
+    // Add loadeddata event listener for audio
+    audio.addEventListener('loadeddata', () => {
+        console.log('Audio data loaded successfully');
+    });
+
+    // progressContainer.addEventListener('click', (e) => {
+    //     if (!isBuzzed) {
+    //         const rect = progressContainer.getBoundingClientRect();
+    //         const pos = (e.clientX - rect.left) / rect.width;
+    //         audio.currentTime = pos * audio.duration;
+    //     }
+    // });
+
+    // Update reading speed display
+    readingSpeedSlider.addEventListener('input', () => {
+        readingSpeedValue.textContent = `${readingSpeedSlider.value}x`;
+    });
+
+    // Text toggle event listener
+    showTextToggle.addEventListener('change', () => {
+        textDisplay.classList.toggle('hidden', !showTextToggle.checked);
+        if (showTextToggle.checked && tossup) {
+            if (!audio.paused) {
+                // Audio is playing - start text sync without power mark
+                tossup.startTextSync(tossupTextElement, audio);
+            } else {
+                // Audio is paused
+                if (isBuzzed || audio.ended) {
+                    // If buzzed or audio ended, show text with buzz point and power mark
+                    const markedText = tossup.markBuzzPoint(audio.currentTime);
+                    if (markedText) {
+                        tossupTextElement.textContent = markedText;
+                    }
+                } else {
+                    // Show text up to current point without power mark
+                    let currentText = '';
+                    if (tossup.syncMap && tossup.syncMap.fragments) {
+                        const currentTime = audio.currentTime;
+                        tossup.syncMap.fragments.forEach((fragment, i) => {
+                            if (fragment.lines && fragment.lines.length > 0) {
+                                if (fragment.start <= currentTime) {
+                                    if (i > 0 && !(/^[.,!?;:)]/.test(fragment.lines[0]))) {
+                                        currentText += ' ';
+                                    }
+                                    currentText += fragment.lines[0];
+                                }
+                            }
+                        });
+                    }
+                    tossupTextElement.textContent = currentText;
+                }
+            }
+        }
+    });
+
+    // Add toggle correct button handler
+    toggleCorrectButton.addEventListener('click', () => {
+        // Toggle the correct/incorrect state
+        isCorrect = !isCorrect;
+
+        // Handle score changes
+        if (isCorrect) {
+            // If changing from incorrect to correct
+            scores.negs--; // Remove the neg
+            if (tossup.isPower) {
+                scores.powers++; // Add power if it was in power
+                lastBuzzType = 'power';
+            } else {
+                scores.tens++; // Add ten if not in power
+                lastBuzzType = 'regular';
+            }
+        } else {
+            // If changing from correct to incorrect
+            if (lastBuzzType === 'power') {
+                scores.powers--; // Remove power
+            } else if (lastBuzzType === 'regular') {
+                scores.tens--; // Remove ten
+            }
+            scores.negs++; // Add neg
+            lastBuzzType = 'neg';
+        }
+
+        // Update button appearance
+        toggleCorrectButton.classList.toggle('correct', isCorrect);
+        toggleCorrectButton.classList.toggle('incorrect', !isCorrect);
+        toggleCorrectButton.textContent = isCorrect ? 'Mark as Incorrect' : 'Mark as Correct';
+
+        // Update score display
+        updateScoreDisplay();
+
+        // Keep the history entry in step with the corrected result
+        if (tossup && tossup.id) {
+            tossupHistory.updateEntry(tossup.id, { result: currentResult() });
+        }
+    });
+
+    resetScoresButton.addEventListener('click', async () => {
+        if (confirm('Are you sure you want to reset all scores? This cannot be undone.')) {
+            try {
+                const response = await fetch('/reset-scores', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to reset scores');
+                }
+
+                // Reset local scores object
+                scores.powers = 0;
+                scores.tens = 0;
+                scores.negs = 0;
+
+                // Update the display
+                updateScoreDisplay();
+
+                // Show success notification
+                showNotification('Scores have been reset successfully');
+
+            } catch (error) {
+                console.error('Error resetting scores:', error);
+                showNotification('Failed to reset scores', 'error');
+            }
+        }
+    });
+
+    // Save settings before page unloads
+    window.addEventListener('beforeunload', saveSettings);
+
+    // Save settings when they change
+    document.querySelectorAll('.settings-input').forEach(input => {
+        input.addEventListener('change', saveSettings);
+    });
+
+    // Collapsible boxes — the settings groups and every history entry.
+    // Handled by delegation so history boxes added later need no extra wiring.
+    function setCollapsed(header, collapsed, persist) {
+        const targetId = header.getAttribute('data-target');
+        const content = document.getElementById(targetId);
+        if (!content) return;
+
+        header.classList.toggle('collapsed', collapsed);
+        content.classList.toggle('collapsed', collapsed);
+        header.setAttribute('aria-expanded', String(!collapsed));
+
+        // Only the settings groups remember their state between visits;
+        // history boxes are session-scoped and always start collapsed.
+        if (persist && header.hasAttribute('data-persist')) {
+            localStorage.setItem(targetId + '-collapsed', collapsed);
+        }
+    }
+
+    function toggleCollapsible(header) {
+        setCollapsed(header, !header.classList.contains('collapsed'), true);
+    }
+
+    document.addEventListener('click', (event) => {
+        const header = event.target.closest?.('.collapsible-header');
+        if (header) {
+            toggleCollapsible(header);
+        }
+    });
+
+    // Enter only — Space is the global buzz shortcut
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Enter') return;
+        const header = event.target.closest?.('.collapsible-header');
+        if (header) {
+            event.preventDefault();
+            toggleCollapsible(header);
+        }
+    });
+
+    // Suppress transitions while the stored state is applied so the panels
+    // don't animate open/closed on every page load.
+    document.body.classList.add('collapsibles-initializing');
+
+    document.querySelectorAll('.collapsible-header[data-persist]').forEach(header => {
+        const stored = localStorage.getItem(header.getAttribute('data-target') + '-collapsed');
+        setCollapsed(
+            header,
+            stored === null ? header.classList.contains('collapsed') : stored === 'true',
+            false
+        );
+    });
+
+    // Two frames: one for the restored state to paint, one before re-enabling
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            document.body.classList.remove('collapsibles-initializing');
+        });
+    });
+
+    // Load settings when page loads
+    loadSettings();
+
+    // ------------------------------------------------------------------
+    // Tossup generation
+    // ------------------------------------------------------------------
+
+    async function handleNextTossup() {
+        // Prevent multiple simultaneous requests
+        if (isGenerating) {
+            console.log('Already generating tossup, please wait...');
+            return;
+        }
+
+        try {
+            isGenerating = true;
+            nextButton.disabled = true;  // Disable button while generating
+            showPersistentNotification('Generating tossup...');
+
+            // Reset pause state if paused
+            if (isPaused) {
+                isPaused = false;
+                pauseButton.textContent = 'Pause';
+                pauseButton.style.backgroundColor = '#ffc107';
+            }
+
+            // Ensure audio is fully stopped
+            audio.pause();
+
+            // Clear any existing tossup, recording it first if the reader
+            // moved on before it finished
+            if (tossup) {
+                recordHistory('skipped');
+                tossup.stopTextSync(audio);
+                tossup.cleanup();
+            }
+
+            // ...rest of your existing handleNextTossup code...
+            toggleCorrectButton.classList.add('hidden');
+            try {
+                console.log('Next button clicked - starting tossup generation');
+
+                // Clear any existing timers
+                clearTimers();
+
+                const difficulties = Array.from(document.querySelectorAll('input[name="difficulty"]:checked')).map(checkbox => checkbox.value);
+                const subjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(checkbox => checkbox.value);
+                const readingSpeed = parseFloat(readingSpeedSlider.value);
+
+                console.log('Selected settings:', { difficulties, subjects, readingSpeed });
+
+                // Reset UI state
+                buzzButton.disabled = false;
+                answerInput.disabled = true;
+                submitAnswer.disabled = true;
+                isBuzzed = false;
+                isCorrect = false;
+                lastUserAnswer = '';
+                lastMarkedText = '';
+
+                // Clear the text display and reset UI state
+                tossupTextElement.textContent = '';
+                document.querySelector('.answer-display').classList.add('hidden');
+                const answerInputContainer = document.querySelector('.answer-input-container');
+                answerInputContainer.classList.add('hidden');
+                answerInputContainer.classList.remove('visible');
+
+                // Set text display based on toggle setting
+                console.log('Text display toggle:', showTextToggle.checked);
+                if (!showTextToggle.checked) {
+                    console.log('Hiding text display');
+                    textDisplay.classList.add('hidden');
+                } else {
+                    console.log('Showing text display');
+                    textDisplay.classList.remove('hidden');
+                }
+
+                // Create new tossup with reading speed
+                console.log('Creating new tossup');
+                tossup = new Tossup(difficulties, subjects, readingSpeed);
+
+                console.log('Generating tossup...');
+                const success = await tossup.generate();
+                console.log('Tossup generation result:', success);
+
+                // Update UI
+                if (success) {
+                    hideNotification();
+                    console.log('Updating UI with new tossup');
+                    updateMetadataAndText();
+
+                    // Older tossups the server just aged out can no longer be replayed
+                    tossupHistory.expire(tossup.expiredIds);
+
+                    // No word timings means the text cannot follow the audio;
+                    // say so rather than leaving an empty panel unexplained
+                    if (!tossup.hasTextSync()) {
+                        console.warn('No sync map for this tossup — text cannot follow the audio');
+                        if (showTextToggle.checked) {
+                            showNotification('Text sync unavailable — the question will appear when the tossup ends.', 4000);
+                        }
+                    }
+
+                    // Reset audio
+                    console.log('Resetting audio');
+                    audio.pause();
+                    audio.currentTime = 0;
+
+                    // Enable pause button when new tossup is loaded
+                    pauseButton.disabled = false;
+
+                    // Create a new audio source. Every tossup now has its own
+                    // path, so no cache-buster is needed — and letting the
+                    // browser cache it keeps history replays instant.
+                    console.log('Creating new audio source');
+                    const newSource = document.createElement('source');
+                    console.log('Audio URL:', tossup.audioPath);
+                    newSource.src = tossup.audioPath;
+                    newSource.type = 'audio/mpeg';
+
+                    // Remove existing sources and add the new one
+                    while (audio.firstChild) {
+                        audio.removeChild(audio.firstChild);
+                    }
+                    audio.appendChild(newSource);
+
+                    // Load the new audio
+                    console.log('Loading new audio');
+                    await audio.load();
+
+                    // Reset buzz state
+                    isBuzzed = false;
+                    buzzButton.disabled = false;
+                    answerInput.disabled = true;
+                    submitAnswer.disabled = true;
+                    answerInput.value = '';
+
+                    // Start playing audio
+                    try {
+                        console.log('Attempting to play audio');
+                        const playPromise = audio.play();
+                        if (playPromise !== undefined) {
+                            playPromise.then(() => {
+                                console.log('Audio playback started successfully');
+                                // Start text sync if toggle is checked
+                                if (showTextToggle.checked) {
+                                    console.log('Starting text sync');
+                                    tossup.startTextSync(tossupTextElement, audio);
+                                }
+                            }).catch(error => {
+                                console.error('Error playing audio:', error);
+                                alert('Failed to play audio. Please check your browser settings and try again.');
+                            });
+                        }
+                    } catch (error) {
+                        console.error('Error in audio playback:', error);
+                        alert('Failed to play audio. Please check your browser settings and try again.');
+                    }
+                } else {
+                    hideNotification();
+                    showNotification('No tossups found for the selected criteria. Please try different settings.', 5000);
+                }
+            } catch (error) {
+                console.error('Error in next button handler:', error);
+                hideNotification();
+                alert('Failed to generate tossup. Please try again.');
+            } finally {
+                isGenerating = false;
+                nextButton.disabled = false;  // Re-enable button
+            }
+        } catch (error) {
+            console.error('Error in handleNextTossup:', error);
+            hideNotification();
+            alert('An error occurred while generating the tossup. Please try again.');
+        }
+    }
 
     // Function to update metadata and text display
     function updateMetadataAndText() {
@@ -81,54 +569,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to update score display
-    function updateScoreDisplay() {
-        powerScoreElement.textContent = scores.powers;
-        tenScoreElement.textContent = scores.tens;
-        negScoreElement.textContent = scores.negs;
-        totalScoreElement.textContent = scores.total;
-    }
-
-    // Function to end the tossup (called when time runs out or answer is correct)
-    function endTossup() {
-        // Stop text syncing to clean up event listeners
-        if (tossup) {
-            tossup.stopTextSync(audio);
-        }
-
-        // Show both text and answer
-        textDisplay.classList.remove('hidden');
-        document.querySelector('.answer-display').classList.remove('hidden');
-
-        // Mark the buzz point in the text and add power mark
-        let markedText = tossup.markBuzzPoint(audio.currentTime);
-        if (markedText) {
-            // Add power mark only after tossup has ended
-            if (tossup.powerMarkIndex !== undefined && tossup.powerMarkIndex >= 0) {
-                markedText = tossup.addPowerMark(markedText);
-                markedText = "<b>" + markedText.slice(0, tossup.powerMarkIndex) + "</b>" + markedText.slice(tossup.powerMarkIndex);
-                console.log("this is working");
-            }
-            tossupTextElement.innerHTML = markedText;
-        }
-
-        toggleCorrectButton.classList.remove('hidden');
-        lastBuzzType = tossup.isPower ? 'power' : 'regular';
-        if (!isCorrect) {
-            lastBuzzType = 'neg';
-        }
-
-        // Set initial button state
-        if (isCorrect) {
-            toggleCorrectButton.classList.add('correct');
-            toggleCorrectButton.classList.remove('incorrect');
-            toggleCorrectButton.textContent = 'Mark as Incorrect';
-        } else {
-            toggleCorrectButton.classList.add('incorrect');
-            toggleCorrectButton.classList.remove('correct');
-            toggleCorrectButton.textContent = 'Mark as Correct';
-        }
-    }
+    // ------------------------------------------------------------------
+    // Timers
+    // ------------------------------------------------------------------
 
     // Function to start the buzz timer
     function startBuzzTimer() {
@@ -220,6 +663,10 @@ document.addEventListener('DOMContentLoaded', () => {
         answerTimer.classList.add('hidden');
     }
 
+    // ------------------------------------------------------------------
+    // Buzzing and answering
+    // ------------------------------------------------------------------
+
     // Function to handle buzz
     function handleBuzz() {
         if (tossup && !isBuzzed) {
@@ -254,6 +701,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.timer-display').classList.add('hidden');
 
             const userAnswer = answerInput.value.trim();
+            lastUserAnswer = userAnswer;
 
             try {
                 const result = await tossup.checkAnswer(userAnswer);
@@ -324,368 +772,150 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to check if an input is focused
-    function isInputFocused() {
-        return document.activeElement.tagName.toLowerCase() === 'input';
-    }
+    // ------------------------------------------------------------------
+    // Ending the tossup
+    // ------------------------------------------------------------------
 
-    // Event listeners
-    buzzButton.addEventListener('click', handleBuzz);
-    submitAnswer.addEventListener('click', handleAnswerSubmission);
-    answerInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            handleAnswerSubmission();
-        }
-    });
-
-    // Update reading speed display
-    readingSpeedSlider.addEventListener('input', () => {
-        readingSpeedValue.textContent = `${readingSpeedSlider.value}x`;
-    });
-
-    async function handleNextTossup() {
-        // Prevent multiple simultaneous requests
-        if (isGenerating) {
-            console.log('Already generating tossup, please wait...');
-            return;
+    // Function to end the tossup (called when time runs out or answer is correct)
+    function endTossup() {
+        // Stop text syncing to clean up event listeners
+        if (tossup) {
+            tossup.stopTextSync(audio);
         }
 
-        try {
-            isGenerating = true;
-            nextButton.disabled = true;  // Disable button while generating
-            showPersistentNotification('Generating tossup...');
+        // Show both text and answer
+        textDisplay.classList.remove('hidden');
+        document.querySelector('.answer-display').classList.remove('hidden');
 
-            // Reset pause state if paused
-            if (isPaused) {
-                isPaused = false;
-                pauseButton.textContent = 'Pause';
-                pauseButton.style.backgroundColor = '#ffc107';
+        // Mark the buzz point in the text and add power mark
+        let markedText = tossup.markBuzzPoint(audio.currentTime);
+        lastMarkedText = markedText || '';
+        if (markedText) {
+            // Add power mark only after tossup has ended
+            if (tossup.powerMarkIndex !== undefined && tossup.powerMarkIndex >= 0) {
+                markedText = tossup.addPowerMark(markedText);
+                markedText = "<b>" + markedText.slice(0, tossup.powerMarkIndex) + "</b>" + markedText.slice(tossup.powerMarkIndex);
+                console.log("this is working");
             }
-
-            // Ensure audio is fully stopped
-            audio.pause();
-
-            // Clear any existing tossup
-            if (tossup) {
-                tossup.stopTextSync(audio);
-                tossup.cleanup();
-            }
-
-            // ...rest of your existing handleNextTossup code...
-            toggleCorrectButton.classList.add('hidden');
-            try {
-                console.log('Next button clicked - starting tossup generation');
-
-                // Clear any existing timers
-                clearTimers();
-
-                const difficulties = Array.from(document.querySelectorAll('input[name="difficulty"]:checked')).map(checkbox => checkbox.value);
-                const subjects = Array.from(document.querySelectorAll('input[name="subject"]:checked')).map(checkbox => checkbox.value);
-                const readingSpeed = parseFloat(readingSpeedSlider.value);
-
-                console.log('Selected settings:', { difficulties, subjects, readingSpeed });
-
-                // Reset UI state
-                buzzButton.disabled = false;
-                answerInput.disabled = true;
-                submitAnswer.disabled = true;
-                isBuzzed = false;
-                isCorrect = false;
-
-                // Clear the text display and reset UI state
-                tossupTextElement.textContent = '';
-                document.querySelector('.answer-display').classList.add('hidden');
-                const answerInputContainer = document.querySelector('.answer-input-container');
-                answerInputContainer.classList.add('hidden');
-                answerInputContainer.classList.remove('visible');
-
-                // Set text display based on toggle setting
-                console.log('Text display toggle:', showTextToggle.checked);
-                if (!showTextToggle.checked) {
-                    console.log('Hiding text display');
-                    textDisplay.classList.add('hidden');
-                } else {
-                    console.log('Showing text display');
-                    textDisplay.classList.remove('hidden');
-                }
-
-                // Create new tossup with reading speed
-                console.log('Creating new tossup');
-                tossup = new Tossup(difficulties, subjects, readingSpeed);
-
-                console.log('Generating tossup...');
-                const success = await tossup.generate();
-                console.log('Tossup generation result:', success);
-
-                // Update UI
-                if (success) {
-                    hideNotification();
-                    console.log('Updating UI with new tossup');
-                    updateMetadataAndText();
-
-                    // Reset audio
-                    console.log('Resetting audio');
-                    audio.pause();
-                    audio.currentTime = 0;
-
-                    // Enable pause button when new tossup is loaded
-                    pauseButton.disabled = false;
-
-                    // Create a new audio source to force reload
-                    console.log('Creating new audio source');
-                    const newSource = document.createElement('source');
-                    const audioUrl = tossup.audioPath + '?t=' + new Date().getTime();
-                    console.log('Audio URL:', audioUrl);
-                    newSource.src = audioUrl;
-                    newSource.type = 'audio/mpeg';
-
-                    // Remove existing sources and add the new one
-                    while (audio.firstChild) {
-                        audio.removeChild(audio.firstChild);
-                    }
-                    audio.appendChild(newSource);
-
-                    // Load the new audio
-                    console.log('Loading new audio');
-                    await audio.load();
-
-                    // Reset buzz state
-                    isBuzzed = false;
-                    buzzButton.disabled = false;
-                    answerInput.disabled = true;
-                    submitAnswer.disabled = true;
-                    answerInput.value = '';
-
-                    // Start playing audio
-                    try {
-                        console.log('Attempting to play audio');
-                        const playPromise = audio.play();
-                        if (playPromise !== undefined) {
-                            playPromise.then(() => {
-                                console.log('Audio playback started successfully');
-                                // Start text sync if toggle is checked
-                                if (showTextToggle.checked) {
-                                    console.log('Starting text sync');
-                                    tossup.startTextSync(tossupTextElement, audio);
-                                }
-                            }).catch(error => {
-                                console.error('Error playing audio:', error);
-                                alert('Failed to play audio. Please check your browser settings and try again.');
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Error in audio playback:', error);
-                        alert('Failed to play audio. Please check your browser settings and try again.');
-                    }
-                } else {
-                    hideNotification();
-                    showNotification('No tossups found for the selected criteria. Please try different settings.', 5000);
-                }
-            } catch (error) {
-                console.error('Error in next button handler:', error);
-                hideNotification();
-                alert('Failed to generate tossup. Please try again.');
-            } finally {
-                isGenerating = false;
-                nextButton.disabled = false;  // Re-enable button
-            }
-        } catch (error) {
-            console.error('Error in handleNextTossup:', error);
-            hideNotification();
-            alert('An error occurred while generating the tossup. Please try again.');
+            tossupTextElement.innerHTML = markedText;
         }
-    }
 
-    // Audio event listeners
-    audio.addEventListener('play', () => {
-        buzzButton.disabled = false;
-        if (tossup && showTextToggle.checked) {
-            tossup.startTextSync(tossupTextElement, audio);
-        }
-    });
-
-    // audio.addEventListener('pause', () => {
-    //     if (!isBuzzed) {
-    //         buzzButton.disabled = true;
-    //     }
-    // });
-
-    audio.addEventListener('timeupdate', () => {
-        if (audio.duration) {
-            const progress = (audio.currentTime / audio.duration) * 100;
-            progressBar.style.width = `${progress}%`;
-        }
-    });
-
-    audio.addEventListener('seeking', () => {
-        if (tossup && showTextToggle.checked) {
-            tossup.startTextSync(tossupTextElement, audio);
-        }
-    });
-
-    audio.addEventListener('ended', () => {
-        // Disable pause button when audio ends
-        pauseButton.disabled = true;
-        // Start 8-second buzz timer when tossup ends
-        startBuzzTimer();
-    });
-
-    // progressContainer.addEventListener('click', (e) => {
-    //     if (!isBuzzed) {
-    //         const rect = progressContainer.getBoundingClientRect();
-    //         const pos = (e.clientX - rect.left) / rect.width;
-    //         audio.currentTime = pos * audio.duration;
-    //     }
-    // });
-
-    // Text toggle event listener
-    showTextToggle.addEventListener('change', () => {
-        textDisplay.classList.toggle('hidden', !showTextToggle.checked);
-        if (showTextToggle.checked && tossup) {
-            if (!audio.paused) {
-                // Audio is playing - start text sync without power mark
-                tossup.startTextSync(tossupTextElement, audio);
-            } else {
-                // Audio is paused
-                if (isBuzzed || audio.ended) {
-                    // If buzzed or audio ended, show text with buzz point and power mark
-                    const markedText = tossup.markBuzzPoint(audio.currentTime);
-                    if (markedText) {
-                        tossupTextElement.textContent = markedText;
-                    }
-                } else {
-                    // Show text up to current point without power mark
-                    let currentText = '';
-                    if (tossup.syncMap && tossup.syncMap.fragments) {
-                        const currentTime = audio.currentTime;
-                        tossup.syncMap.fragments.forEach((fragment, i) => {
-                            if (fragment.lines && fragment.lines.length > 0) {
-                                if (fragment.start <= currentTime) {
-                                    if (i > 0 && !(/^[.,!?;:)]/.test(fragment.lines[0]))) {
-                                        currentText += ' ';
-                                    }
-                                    currentText += fragment.lines[0];
-                                }
-                            }
-                        });
-                    }
-                    tossupTextElement.textContent = currentText;
-                }
-            }
-        }
-    });
-
-    // Add keyboard event listener
-    document.addEventListener('keydown', (event) => {
-        // Only handle shortcuts if not in answer input
-        if (document.activeElement !== answerInput) {
-            if (event.key === 'n' || event.key === 'N') {
-                nextButton.click();
-            } else if (event.key === ' ') {
-                // Prevent spacebar from scrolling the page
-                event.preventDefault();
-                buzzButton.click();
-            }
-        }
-    });
-
-    // Add error event listener for audio
-    audio.addEventListener('error', (e) => {
-        console.error('Audio error:', e);
-        alert('Error loading audio. Please try again.');
-    });
-
-    // Add loadeddata event listener for audio
-    audio.addEventListener('loadeddata', () => {
-        console.log('Audio data loaded successfully');
-    });
-
-    // Add toggle correct button handler
-    toggleCorrectButton.addEventListener('click', () => {
-        // Toggle the correct/incorrect state
-        isCorrect = !isCorrect;
-
-        // Handle score changes
-        if (isCorrect) {
-            // If changing from incorrect to correct
-            scores.negs--; // Remove the neg
-            if (tossup.isPower) {
-                scores.powers++; // Add power if it was in power
-                lastBuzzType = 'power';
-            } else {
-                scores.tens++; // Add ten if not in power
-                lastBuzzType = 'regular';
-            }
-        } else {
-            // If changing from correct to incorrect
-            if (lastBuzzType === 'power') {
-                scores.powers--; // Remove power
-            } else if (lastBuzzType === 'regular') {
-                scores.tens--; // Remove ten
-            }
-            scores.negs++; // Add neg
+        toggleCorrectButton.classList.remove('hidden');
+        lastBuzzType = tossup.isPower ? 'power' : 'regular';
+        if (!isCorrect) {
             lastBuzzType = 'neg';
         }
 
-        // Update button appearance
-        toggleCorrectButton.classList.toggle('correct', isCorrect);
-        toggleCorrectButton.classList.toggle('incorrect', !isCorrect);
-        toggleCorrectButton.textContent = isCorrect ? 'Mark as Incorrect' : 'Mark as Correct';
-
-        // Update score display
-        updateScoreDisplay();
-    });
-
-    // Load settings when page loads
-    loadSettings();
-
-    // Save settings before page unloads
-    window.addEventListener('beforeunload', saveSettings);
-
-    // Save settings when they change
-    document.querySelectorAll('.settings-input').forEach(input => {
-        input.addEventListener('change', saveSettings);
-    });
-
-    // Add event listeners for pause functionality
-    pauseButton.addEventListener('click', handlePause);
-    document.addEventListener('keydown', (e) => {
-        if (e.key.toLowerCase() === 'p' && !e.repeat && !isInputFocused()) {
-            handlePause();
+        // Set initial button state
+        if (isCorrect) {
+            toggleCorrectButton.classList.add('correct');
+            toggleCorrectButton.classList.remove('incorrect');
+            toggleCorrectButton.textContent = 'Mark as Incorrect';
+        } else {
+            toggleCorrectButton.classList.add('incorrect');
+            toggleCorrectButton.classList.remove('correct');
+            toggleCorrectButton.textContent = 'Mark as Correct';
         }
-    });
 
-    resetScoresButton.addEventListener('click', async () => {
-        if (confirm('Are you sure you want to reset all scores? This cannot be undone.')) {
+        recordHistory();
+    }
+
+    // ------------------------------------------------------------------
+    // Session history
+    // ------------------------------------------------------------------
+
+    // How the tossup that just finished should be labelled in the history
+    function currentResult() {
+        if (isCorrect) return tossup && tossup.isPower ? 'power' : 'ten';
+        if (isBuzzed) return 'neg';
+        return 'dead';
+    }
+
+    /**
+     * Add the current tossup to the session history. Safe to call more than
+     * once for the same tossup — only the first call is recorded.
+     * @param {string} [result] - overrides the result derived from game state
+     */
+    function recordHistory(result) {
+        if (!tossup || !tossup.id || recordedTossupIds.has(tossup.id)) return;
+
+        recordedTossupIds.add(tossup.id);
+        tossupHistory.add({
+            id: tossup.id,
+            setName: tossup.setName,
+            answer: tossup.answer,
+            // The marked-up text shows where the buzz and power mark fell;
+            // a skipped tossup has no buzz point, so fall back to the full text
+            question: lastMarkedText || tossup.text,
+            audioPath: tossup.audioPath,
+            userAnswer: lastUserAnswer,
+            result: result || currentResult()
+        });
+    }
+
+    // ------------------------------------------------------------------
+    // Helpers
+    // ------------------------------------------------------------------
+
+    // Function to update score display
+    function updateScoreDisplay() {
+        powerScoreElement.textContent = scores.powers;
+        tenScoreElement.textContent = scores.tens;
+        negScoreElement.textContent = scores.negs;
+        totalScoreElement.textContent = scores.total;
+    }
+
+    async function handlePause() {
+        if (!tossup) return;
+
+        isPaused = !isPaused;
+        if (isPaused) {
+            audio.pause();
+            pauseButton.textContent = 'Resume';
+            pauseButton.classList.add('resumed');
+        } else {
             try {
-                const response = await fetch('/reset-scores', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to reset scores');
-                }
-
-                // Reset local scores object
-                scores.powers = 0;
-                scores.tens = 0;
-                scores.negs = 0;
-
-                // Update the display
-                updateScoreDisplay();
-
-                // Show success notification
-                showNotification('Scores have been reset successfully');
-
+                await audio.play();
+                pauseButton.textContent = 'Pause';
+                pauseButton.classList.remove('resumed');
             } catch (error) {
-                console.error('Error resetting scores:', error);
-                showNotification('Failed to reset scores', 'error');
+                if (error.name !== 'AbortError') {
+                    console.error('Error playing audio:', error);
+                }
             }
         }
-    });
+    }
+
+    // Function to check if a control that handles its own keys is focused
+    function isInputFocused() {
+        const active = document.activeElement;
+        if (!active) return false;
+
+        const tag = active.tagName.toLowerCase();
+        if (tag === 'input' || tag === 'textarea' || tag === 'audio') return true;
+
+        // The history replay players and their collapsible headers use space
+        // and enter themselves, so game shortcuts must not steal them
+        return Boolean(active.closest?.('.tossup-history'));
+    }
+
+    function showPersistentNotification(message) {
+        messageElement.textContent = message;
+        notification.classList.remove('hidden');
+        notification.classList.add('show');
+    }
+
+    function hideNotification() {
+        notification.classList.remove('show');
+        setTimeout(() => notification.classList.add('hidden'), 300);
+    }
+
+    function showNotification(message, duration = 3000) {
+        showPersistentNotification(message);
+        setTimeout(() => {
+            hideNotification();
+        }, duration);
+    }
 
     async function saveSettings() {
         try {
@@ -773,78 +1003,4 @@ document.addEventListener('DOMContentLoaded', () => {
             cb.checked = subjects.includes(cb.value);
         });
     }
-
-    const notification = document.querySelector('.notification');
-    const messageElement = notification.querySelector('.notification-message');
-
-    function showPersistentNotification(message) {
-        messageElement.textContent = message;
-        notification.classList.remove('hidden');
-        notification.classList.add('show');
-    }
-
-    function hideNotification() {
-        notification.classList.remove('show');
-        setTimeout(() => notification.classList.add('hidden'), 300);
-    }
-
-    function showNotification(message, duration = 3000) {
-        showPersistentNotification(message);
-        setTimeout(() => {
-            hideNotification();
-        }, duration);
-    }
-
-    async function handlePause() {
-        if (!tossup) return;
-
-        isPaused = !isPaused;
-        if (isPaused) {
-            audio.pause();
-            pauseButton.textContent = 'Resume';
-            pauseButton.classList.add('resumed');
-        } else {
-            try {
-                await audio.play();
-                pauseButton.textContent = 'Pause';
-                pauseButton.classList.remove('resumed');
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    console.error('Error playing audio:', error);
-                }
-            }
-        }
-    }
-
-    // Event listeners
-    nextButton.addEventListener('click', handleNextTossup);
-    document.addEventListener('keydown', (e) => {
-        if ((e.key === 'n' || e.key === 'N') && !isInputFocused() && !isGenerating) {
-            handleNextTossup();
-        }
-    });
-
-    // Add this inside your DOMContentLoaded event listener
-    document.querySelectorAll('.collapsible-header').forEach(header => {
-        header.addEventListener('click', () => {
-            const targetId = header.getAttribute('data-target');
-            const content = document.getElementById(targetId);
-
-            // Toggle collapsed state
-            header.classList.toggle('collapsed');
-            content.classList.toggle('collapsed');
-
-            // Save state to localStorage
-            const isCollapsed = header.classList.contains('collapsed');
-            localStorage.setItem(targetId + '-collapsed', isCollapsed);
-        });
-
-        // Restore collapsed state from localStorage
-        const targetId = header.getAttribute('data-target');
-        const isCollapsed = localStorage.getItem(targetId + '-collapsed') === 'true';
-        if (isCollapsed) {
-            header.classList.add('collapsed');
-            document.getElementById(targetId).classList.add('collapsed');
-        }
-    });
 });

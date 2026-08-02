@@ -73,27 +73,26 @@
             <div class="settings-scroll">
                 <div class="settings-group">
                     <h3>Game Settings</h3>
-                    <div class="setting-item">
-                        <div class="text-display-controls" id="text-toggle-container">
-                            <label class="switch">
-                                <input type="checkbox" id="show-text-toggle" class="settings-input">
-                                <span class="slider round"></span>
-                            </label>
-                            <span>Show Tossup Text</span>
-                        </div>
+                    <div class="setting-item text-display-controls" id="text-toggle-container">
+                        <label class="switch">
+                            <input type="checkbox" id="show-text-toggle" class="settings-input" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <label class="setting-label" for="show-text-toggle">Show Tossup Text</label>
                     </div>
                     <div class="setting-item">
                         <label class="switch">
                             <input type="checkbox" id="allow-rebuzz-toggle">
                             <span class="slider round"></span>
                         </label>
-                        <span>Allow Re-buzzing</span>
+                        <label class="setting-label" for="allow-rebuzz-toggle">Allow Re-buzzing</label>
                     </div>
-                    <div class="setting-item">
+                    <div class="setting-item plain">
                         <button id="resetScores" class="reset-button">Reset Scores</button>
                     </div>
-                    <div class="setting-item">
-                        <label for="reading-speed">Reading Speed: <span id="reading-speed-value">1.0x</span></label>
+                    <div class="setting-item stacked">
+                        <label class="setting-label" for="reading-speed">Reading Speed: <span
+                                id="reading-speed-value">1.0x</span></label>
                         <input type="range" id="reading-speed" min="0.75" max="1.5" step="0.05" value="1.0">
                     </div>
                 </div>
@@ -160,6 +159,22 @@
                 <source id="audioSource" src="" type="audio/mpeg">
                 Your browser does not support the audio element.
             </audio>
+
+            <!-- Tossups already read this session -->
+            <div class="tossup-history">
+                <div class="collapsible-header" data-target="history-content" data-persist role="button" tabindex="0"
+                    aria-expanded="true" aria-controls="history-content">
+                    <label>Previous Tossups <span class="history-count">0</span></label>
+                    <span class="collapse-icon" aria-hidden="true">▼</span>
+                </div>
+                <div id="history-content" class="collapsible-content">
+                    <div class="history-panel">
+                        <p class="history-empty">Tossups you read this session will be listed here.</p>
+                        <div class="history-list"></div>
+                        <button type="button" id="clearHistory" class="clear-history-button">Clear History</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Red section - Question settings -->
@@ -167,9 +182,10 @@
             <div class="settings-scroll">
                 <div class="controls">
                     <div class="input-group">
-                        <div class="collapsible-header collapsed" data-target="difficulty-content">
+                        <div class="collapsible-header collapsed" data-target="difficulty-content" data-persist
+                            role="button" tabindex="0" aria-expanded="false" aria-controls="difficulty-content">
                             <label>Difficulty Levels:</label>
-                            <span class="collapse-icon">▼</span>
+                            <span class="collapse-icon" aria-hidden="true">▼</span>
                         </div>
                         <div id="difficulty-content" class="collapsible-content collapsed">
                             <div class="checkbox-group">
@@ -225,9 +241,10 @@
                         </div>
                     </div>
                     <div class="input-group">
-                        <div class="collapsible-header collapsed" data-target="subjects-content">
+                        <div class="collapsible-header collapsed" data-target="subjects-content" data-persist
+                            role="button" tabindex="0" aria-expanded="false" aria-controls="subjects-content">
                             <label>Subjects:</label>
-                            <span class="collapse-icon">▼</span>
+                            <span class="collapse-icon" aria-hidden="true">▼</span>
                         </div>
                         <div id="subjects-content" class="collapsible-content collapsed">
                             <div class="checkbox-group">

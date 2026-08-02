@@ -3,8 +3,10 @@ export class Tossup {
         this.difficulties = difficulties;
         this.subjects = subjects;
         this.readingSpeed = readingSpeed;
+        this.id = null;
         this.audioPath = null;
         this.syncMap = null;
+        this.text = '';
         this.answer = null;
         this.setName = null;
         this.currentWordIndex = 0;
@@ -13,11 +15,14 @@ export class Tossup {
         this._updateTextFunction = null;
         this.powerMarkPos = null;
         this.isPower = false;
+        this.expiredIds = [];
     }
 
     cleanup() {
+        this.id = null;
         this.audioPath = null;
         this.syncMap = null;
+        this.text = '';
         this.answer = null;
         this.setName = null;
         this.currentWordIndex = 0;
@@ -26,6 +31,7 @@ export class Tossup {
         this._updateTextFunction = null;
         this.powerMarkPos = null;
         this.isPower = false;
+        this.expiredIds = [];
     }
 
     async generate() {
@@ -45,14 +51,18 @@ export class Tossup {
             const data = await response.json();
 
             if (data.success) {
+                this.id = data.tossupId;
                 this.audioPath = data.audioPath;
                 this.syncMap = data.syncMap;
+                this.text = data.text || '';
                 this.answer = data.answer;
                 this.setName = data.setName;
                 this.currentWordIndex = 0;
                 this.displayedText = '';
                 this.powerMarkPos = data.powerMarkPos.length == 0 ? null : data.powerMarkPos[0];
                 this.isPower = false;
+                // Tossups the server has just aged out of temporary storage
+                this.expiredIds = data.expiredTossupIds || [];
 
                 console.log(this.answer);
 
@@ -230,8 +240,17 @@ export class Tossup {
         }
     }
 
+    /** True when word timings are available to reveal the text as it is read. */
+    hasTextSync() {
+        return this.textCues.length > 0;
+    }
+
     markBuzzPoint(currentTime) {
-        if (!this.syncMap || !this.syncMap.fragments) return null;
+        // Without word timings there is no buzz point to mark, but the question
+        // itself is still worth showing once the tossup is over.
+        if (!this.syncMap || !this.syncMap.fragments || !this.syncMap.fragments.length) {
+            return this.text || null;
+        }
 
         // Find the fragment that was playing when the user buzzed
         let buzzFragmentIndex = -1;

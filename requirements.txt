@@ -2,3 +2,8 @@ Flask
 gunicorn
 python-dotenv
 google-cloud-texttospeech
+
+# aeneas and numpy are deliberately NOT listed here. The Dockerfile installs
+# aeneas==1.7.3.0 against a pinned numpy==1.26.4 with --no-build-isolation,
+# because aeneas needs numpy<2 (see the build-time assert at the end of the
+# Dockerfile). Listing them here risks a rebuild that pulls numpy 2.x.

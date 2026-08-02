@@ -37,6 +37,7 @@ ENV/
 .env
 *.db
 *.sqlite3
+deploy.sh
 
 # Audio files
 static/audio/*
@@ -62,6 +63,5 @@ Dockerfile*
 # Other
 .qodo
 .vscode
-discordpacketreader-35651a57ebb7.json
 Dockerfile*
 .dockerignore

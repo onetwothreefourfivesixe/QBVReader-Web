@@ -1,10 +1,20 @@
-// Storage management for client files
+// Manages the temporary files the server keeps for this session.
+//
+// Every tossup that gets read leaves an audio folder behind so it can be
+// replayed from the history list, so cleanup only happens once the tab has
+// been left alone long enough that the session is clearly over. Folders
+// belonging to tabs that were simply closed are reaped server-side by the
+// stale-session sweep in util/util.py.
+
 class StorageManager {
-    constructor() {
+    constructor({ onCleanup } = {}) {
         this.userId = null;
+        this.onCleanup = onCleanup;
         this.lastInteractionTime = Date.now();
         this.cleanupInterval = null;
-        this.CLEANUP_TIMEOUT = 5 * 60 * 1000; // 10 minutes in milliseconds
+        // Long enough that stepping away mid-session does not cost you the
+        // tossups you have already read
+        this.CLEANUP_TIMEOUT = 60 * 60 * 1000; // 1 hour
         this.initialize();
     }
 
@@ -64,6 +74,8 @@ class StorageManager {
     }
 
     async performCleanup() {
+        if (!this.userId) return;
+
         try {
             const response = await fetch('/cleanup-files', {
                 method: 'POST',
@@ -79,32 +91,17 @@ class StorageManager {
                 throw new Error('Failed to cleanup files');
             }
 
+            // The history list would otherwise keep offering replays for audio
+            // that no longer exists
+            if (this.onCleanup) {
+                this.onCleanup();
+            }
+
             this.updateLastInteractionTime();
         } catch (error) {
             console.error('Error during cleanup:', error);
         }
     }
-
-    // Method to be called when the page is unloaded
-    async cleanupOnUnload() {
-        if (this.cleanupInterval) {
-            clearInterval(this.cleanupInterval);
-        }
-        await this.performCleanup();
-    }
 }
 
-// Create and export the storage manager instance
-const storageManager = new StorageManager();
-
-// Handle tab/browser closure
-window.addEventListener('beforeunload', (event) => {
-    // Prevent immediate closure to allow cleanup
-    event.preventDefault();
-    storageManager.cleanupOnUnload();
-    // Chrome requires returnValue to be set
-    event.returnValue = '';
-});
-
-export { storageManager };
-
+export { StorageManager };

@@ -129,47 +129,41 @@ audio::-webkit-media-controls-timeline {
     display: none;
 }
 
-/* Multiselect styles */
-.input-group select[multiple] {
-    height: 150px;
-    padding: 5px;
-}
-
-.input-group select[multiple] option {
-    padding: 5px;
-}
-
-.input-group select[multiple] option:checked {
-    background-color: #007bff;
-    color: white;
-}
-
 /* Checkbox groups */
 .checkbox-group {
     display: flex;
     flex-direction: column;
-    gap: 0.15rem;
+    gap: 0.1rem;
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 0.35rem;
-    font-size: 0.9rem;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin: 0;
+    padding: 0.2rem 0.35rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 120ms ease;
+}
+
+.checkbox-label:hover {
+    background-color: rgba(0, 0, 0, 0.04);
 }
 
 .checkbox-label input[type="checkbox"] {
     margin: 0;
+    flex-shrink: 0;
     cursor: pointer;
+    accent-color: #38b7ff;
 }
 
 /* Tossup metadata */
 .tossup-metadata {
-    background-color: #f0f7ff;
-    border-radius: 4px;
-    border: 1px solid #cce0ff;
-    padding: 8px;
-    margin-bottom: 10px;
+    padding: 0 0 0.6rem;
+    margin-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 }
 
 .tossup-metadata.hidden {
@@ -177,14 +171,16 @@ audio::-webkit-media-controls-timeline {
 }
 
 .set-name {
-    font-style: italic;
-    color: #666;
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #999;
 }
 
 .answer {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: normal;
     color: #2c3e50;
     margin: 0;
@@ -233,11 +229,8 @@ audio::-webkit-media-controls-timeline {
 
 /* Text display */
 .text-display {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #f8f9fa;
-    border-radius: 4px;
-    border: 1px solid #ddd;
+    margin-top: 0;
+    padding: 0;
 }
 
 .text-display.hidden {
@@ -268,16 +261,17 @@ audio::-webkit-media-controls-timeline {
 .progress-container {
     width: 100%;
     height: 6px;
-    background-color: #f0f0f0;
-    border-radius: 2px;
+    background-color: #ececee;
+    border-radius: 999px;
     overflow: hidden;
-    margin: 0.5rem 0;
+    margin: 0.5rem 0 0;
 }
 
 .progress-bar {
     height: 100%;
     width: 0;
     background-color: #4CAF50;
+    border-radius: 999px;
     transition: width 0.1s linear;
 }
 
@@ -286,18 +280,12 @@ audio::-webkit-media-controls-timeline {
 }
 
 /* Toggle switch */
-.text-display-controls {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 0.5rem;
-}
-
 .switch {
     position: relative;
     display: inline-block;
-    width: 60px;
-    height: 34px;
+    flex-shrink: 0;
+    width: 40px;
+    height: 22px;
 }
 
 .switch input {
@@ -314,26 +302,32 @@ audio::-webkit-media-controls-timeline {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: background-color 180ms ease;
 }
 
 .slider:before {
     position: absolute;
     content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 2px;
     background-color: white;
-    transition: .4s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 input:checked+.slider {
-    background-color: #2196F3;
+    background-color: #38b7ff;
 }
 
 input:checked+.slider:before {
-    transform: translateX(26px);
+    transform: translateX(18px);
+}
+
+.switch input:focus-visible+.slider {
+    outline: 2px solid #38b7ff;
+    outline-offset: 2px;
 }
 
 .slider.round {
@@ -349,25 +343,6 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-}
-
-.input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.input-group label {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.input-group select {
-    width: 100%;
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
 }
 
 .audio-controls {
@@ -387,8 +362,9 @@ input:checked+.slider:before {
 .button-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0;
 }
 
 .score-display {
@@ -397,14 +373,40 @@ input:checked+.slider:before {
     margin-left: auto;
 }
 
+/* Shape and motion only — each button keeps its own colour below */
+.next-tossup-button,
+.buzz-button,
+.pause-button,
+.submit-button,
+.toggle-correct-button {
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: background-color 150ms ease, box-shadow 150ms ease, transform 80ms ease;
+}
+
+.next-tossup-button:active:not(:disabled),
+.buzz-button:active:not(:disabled),
+.pause-button:active:not(:disabled),
+.submit-button:active:not(:disabled) {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+.next-tossup-button:disabled,
+.buzz-button:disabled,
+.pause-button:disabled,
+.submit-button:disabled {
+    box-shadow: none;
+}
+
 .next-tossup-button,
 .buzz-button,
 .pause-button {
     flex: 0 1 auto;
-    min-width: 120px;
-    padding: 0.75rem 2rem;
-    font-size: 1.1rem;
-    font-weight: 500;
+    min-width: 112px;
+    padding: 0.65rem 1.6rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .next-tossup-button {
@@ -450,18 +452,33 @@ input:checked+.slider:before {
 .answer-input-container {
     margin-top: auto;
     display: flex;
-    gap: 1rem;
+    gap: 0.6rem;
+    padding: 0.6rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .answer-input-container input {
     flex: 1;
-    padding: 0.75rem;
-    font-size: 1.1rem;
+    padding: 0.6rem 0.75rem;
+    font-size: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.answer-input-container input:focus {
+    outline: none;
+    border-color: #38b7ff;
+    box-shadow: 0 0 0 3px rgba(56, 183, 255, 0.18);
 }
 
 .submit-button {
-    padding: 0.75rem 2rem;
-    font-size: 1.1rem;
+    padding: 0.65rem 1.6rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .submit-button:disabled {
@@ -539,31 +556,106 @@ input:checked+.slider:before {
 }
 
 /* Customize scrollbar appearance */
-.settings-scroll::-webkit-scrollbar {
+.settings-scroll::-webkit-scrollbar,
+.tossup-area::-webkit-scrollbar {
     width: 8px;
 }
 
-.settings-scroll::-webkit-scrollbar-track {
+.settings-scroll::-webkit-scrollbar-track,
+.tossup-area::-webkit-scrollbar-track {
     background: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
 }
 
-.settings-scroll::-webkit-scrollbar-thumb {
+.settings-scroll::-webkit-scrollbar-thumb,
+.tossup-area::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
 }
 
-.settings-scroll::-webkit-scrollbar-thumb:hover {
+.settings-scroll::-webkit-scrollbar-thumb:hover,
+.tossup-area::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.3);
 }
 
-/* Ensure content within settings is properly spaced */
+/* Game-settings card — same treatment as the collapsible .input-group cards */
 .settings-group {
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+    padding: 0.35rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.settings-group h3 {
+    margin: 0;
+    padding: 0.55rem 0.65rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
 }
 
 .setting-item {
-    margin-bottom: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+    padding: 0.35rem 0.65rem;
+    border-radius: 7px;
+    transition: background-color 120ms ease;
+}
+
+/* Rows holding a button don't read as clickable surfaces themselves */
+.setting-item:not(.plain):hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.setting-item.stacked {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.4rem;
+}
+
+.setting-label {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #333;
+    cursor: pointer;
+    user-select: none;
+}
+
+.text-display-controls {
+    margin-top: 0;
+}
+
+/* Reset Scores — destructive, so it reads as an outline button rather than
+   inheriting the global green primary style */
+.reset-button {
+    width: 100%;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #c9302c;
+    background-color: #fff;
+    border: 1px solid rgba(201, 48, 44, 0.35);
+    border-radius: 7px;
+    transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.reset-button:hover {
+    color: #c9302c;
+    background-color: #fdecea;
+    border-color: #c9302c;
+}
+
+.reset-button:active {
+    background-color: #fadbd8;
+}
+
+.reset-button:focus-visible {
+    outline: 2px solid #c9302c;
+    outline-offset: 2px;
 }
 
 /* Timer display */
@@ -612,16 +704,19 @@ input:checked+.slider:before {
 .score-item {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.9rem;
-    background-color: #f5f5f5;
+    gap: 0.35rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 7px;
+    font-size: 0.85rem;
+    background-color: #f7f7f8;
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .score-label {
-    font-weight: bold;
-    color: #333;
+    font-weight: 600;
+    font-size: 0.78rem;
+    letter-spacing: 0.01em;
+    color: #777;
 }
 
 .score-value {
@@ -657,30 +752,39 @@ input:checked+.slider:before {
     margin-bottom: 1rem;
 }
 
+/* Playback controls card */
+.tossup-controls {
+    padding: 0.9rem 1rem 0.75rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
 .tossup-text-container {
-    background-color: #f8f9fa;
-    border: 1px solid #dee2e6;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.1rem;
+    margin: 0.75rem 0;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .text-display {
-    margin-bottom: 10px;
+    margin-bottom: 0;
 }
 
 .tossup-text {
-    font-size: 1.1rem;
-    line-height: 1.6;
+    font-size: 1.05rem;
+    line-height: 1.65;
     color: #333;
     margin-bottom: 0;
 }
 
 .answer-display {
-    border-top: 1px solid #dee2e6;
-    padding-top: 10px;
-    margin-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 0.75rem;
+    margin-top: 0.75rem;
 }
 
 .shortcut-box {
@@ -703,48 +807,280 @@ input:checked+.slider:before {
     color: #333;
 }
 
-/* Add these new styles */
+/* Collapsible setting groups */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    margin-bottom: 0.75rem;
+    padding: 0.35rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
 .collapsible-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 4px;
+    gap: 0.5rem;
+    padding: 0.55rem 0.65rem;
+    border-radius: 7px;
+    background-color: transparent;
     cursor: pointer;
-    margin-bottom: 5px;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 150ms ease;
 }
 
 .collapsible-header:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.045);
 }
 
-.collapsible-content {
-    max-height: 500px;
-    overflow: hidden;
-    transition: max-height 0.3s ease-out;
+.collapsible-header:active {
+    background-color: rgba(0, 0, 0, 0.08);
 }
 
-.collapsible-content.collapsed {
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
+.collapsible-header:focus-visible {
+    outline: 2px solid #38b7ff;
+    outline-offset: -2px;
+}
+
+/* Override the global block-label spacing so the header stays centred */
+.collapsible-header label {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    cursor: inherit;
 }
 
 .collapse-icon {
-    transition: transform 0.3s ease;
+    font-size: 0.7rem;
+    line-height: 1;
+    color: #777;
+    transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .collapsible-header.collapsed .collapse-icon {
     transform: rotate(-90deg);
 }
 
-/* Existing input-group style */
-.input-group {
-    margin-bottom: 1.5rem;
-    background-color: var(--section-bg);
+/*
+ * Animating grid-template-rows 1fr -> 0fr eases to the content's real
+ * height, so a group with 10 options and one with 2 both take the same
+ * time and neither stalls part-way (which a fixed max-height causes).
+ */
+.collapsible-content {
+    display: grid;
+    grid-template-rows: 1fr;
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
+    transition: grid-template-rows 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 160ms ease 60ms,
+        visibility 0s;
+}
+
+.collapsible-content>* {
+    min-height: 0;
+}
+
+.collapsible-content.collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    /* Keep collapsed options out of the tab order once the panel is shut */
+    visibility: hidden;
+    transition: grid-template-rows 240ms cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 120ms ease,
+        visibility 0s linear 240ms;
+}
+
+.collapsible-content .checkbox-group {
+    padding: 0.15rem 0.3rem 0.4rem;
+}
+
+/* Session history of previously read tossups */
+.tossup-area {
+    /* The history list grows as the session goes on; keep it inside the
+       column instead of spilling out of the fixed-height grid. */
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.tossup-history {
+    margin: 20px 0 10px;
+    padding: 0.35rem;
+    background-color: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.tossup-history>.collapsible-header label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+    cursor: inherit;
+}
+
+.history-count {
+    display: inline-block;
+    min-width: 1.4rem;
+    margin-left: 0.35rem;
+    padding: 0.05rem 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    color: #555;
+    background-color: rgba(0, 0, 0, 0.06);
+    border-radius: 999px;
+}
+
+.history-panel {
+    padding: 0.25rem 0.3rem 0.4rem;
+}
+
+.history-empty {
+    margin: 0;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.history-item {
+    border: 1px solid rgba(0, 0, 0, 0.07);
     border-radius: 8px;
-    padding: 0.5rem;
+    background-color: #fcfcfd;
+}
+
+.history-item .collapsible-header {
+    padding: 0.45rem 0.6rem;
+}
+
+.history-title {
+    display: flex;
+    flex: 1;
+    align-items: baseline;
+    gap: 0.45rem;
+    min-width: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    color: #333;
+    cursor: inherit;
+}
+
+.history-number {
+    font-weight: 600;
+    color: #888;
+}
+
+.history-set {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.history-result {
+    flex-shrink: 0;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    border-radius: 999px;
+    background-color: rgba(0, 0, 0, 0.06);
+    color: #555;
+}
+
+.history-result.power {
+    background-color: #e6f4ea;
+    color: #1e7e34;
+}
+
+.history-result.ten {
+    background-color: #e7f1fb;
+    color: #1a7db5;
+}
+
+.history-result.neg {
+    background-color: #fdecea;
+    color: #c9302c;
+}
+
+.history-body {
+    padding: 0.2rem 0.6rem 0.6rem;
+}
+
+.history-question {
+    margin: 0 0 0.5rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #444;
+}
+
+.history-answer {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #222;
+}
+
+.history-user-answer {
+    margin: 0.3rem 0 0;
+    font-size: 0.8rem;
+    color: #777;
+}
+
+.history-audio {
+    width: 100%;
+    height: 32px;
+    margin-top: 0.5rem;
+}
+
+.history-audio-missing {
+    margin: 0.5rem 0 0;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: #999;
+}
+
+.clear-history-button {
+    margin-top: 0.5rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #666;
+    background-color: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 7px;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.clear-history-button:hover {
+    color: #c9302c;
+    background-color: #fdecea;
+    border-color: rgba(201, 48, 44, 0.4);
+}
+
+/* Applied until the stored open/closed state has been restored, so the
+   panels don't animate themselves into position on page load. */
+.collapsibles-initializing .collapsible-content,
+.collapsibles-initializing .collapse-icon {
+    transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .collapsible-content,
+    .collapse-icon {
+        transition-duration: 1ms;
+    }
 }
 
 /* Mobile Responsive Styles */
@@ -858,9 +1194,8 @@ input:checked+.slider:before {
     }
 
     /* Make checkboxes and toggles easier to tap */
-    .checkbox-label,
-    .switch {
-        padding: 8px 0;
+    .checkbox-label {
+        padding: 8px 0.35rem;
     }
 
     /* Adjust progress bar for mobile */
@@ -877,11 +1212,11 @@ input:checked+.slider:before {
 
     /* Adjust settings groups for mobile */
     .settings-group {
-        padding: 10px;
+        padding: 0.4rem;
     }
 
     .setting-item {
-        margin: 8px 0;
+        padding: 0.55rem 0.65rem;
     }
 
     /* Make answer display more readable on mobile */
@@ -942,36 +1277,60 @@ body {
 
 /* Reading Speed Slider Styles */
 #reading-speed {
+    -webkit-appearance: none;
+    appearance: none;
     width: 100%;
-    margin: 10px 0;
-    height: 8px;
-    background: #ddd;
-    border-radius: 4px;
+    margin: 0;
+    height: 6px;
+    background: #e3e3e3;
+    border-radius: 999px;
     outline: none;
+    cursor: pointer;
+}
+
+#reading-speed:focus-visible {
+    outline: 2px solid #38b7ff;
+    outline-offset: 4px;
 }
 
 #reading-speed::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 20px;
-    height: 20px;
-    background: #4CAF50;
+    width: 16px;
+    height: 16px;
+    background: #38b7ff;
+    border: 2px solid #fff;
     border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     cursor: pointer;
+    transition: transform 120ms ease;
 }
 
 #reading-speed::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #4CAF50;
+    width: 16px;
+    height: 16px;
+    background: #38b7ff;
+    border: 2px solid #fff;
     border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
     cursor: pointer;
-    border: none;
+    transition: transform 120ms ease;
+}
+
+#reading-speed:hover::-webkit-slider-thumb,
+#reading-speed:active::-webkit-slider-thumb {
+    transform: scale(1.15);
+}
+
+#reading-speed:hover::-moz-range-thumb,
+#reading-speed:active::-moz-range-thumb {
+    transform: scale(1.15);
 }
 
 #reading-speed-value {
     display: inline-block;
-    min-width: 40px;
-    text-align: right;
+    min-width: 38px;
+    font-weight: 600;
+    color: #1a7db5;
 }
 
 /* Mobile adjustments for reading speed slider */
@@ -991,14 +1350,16 @@ body {
     }
 }
 
-/* Toggle correct button */
+/* Toggle correct button — colours unchanged, shape matched to the other buttons */
 .toggle-correct-button {
-    margin-top: 10px;
-    padding: 8px 16px;
+    margin-top: 0.75rem;
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+    font-weight: 600;
     background-color: #666;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 8px;
     cursor: pointer;
 }
 
@@ -1008,16 +1369,6 @@ body {
 
 .toggle-correct-button.hidden {
     display: none;
-}
-
-.toggle-correct-button {
-    margin-top: 10px;
-    padding: 8px 16px;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
 .toggle-correct-button.correct {

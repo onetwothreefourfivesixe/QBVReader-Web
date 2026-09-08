@@ -1,4 +1,4 @@
-# QBVReader
+# QBVReader - Web
 
 **Live at [qbv-reader.com](https://www.qbv-reader.com/).**
 

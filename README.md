@@ -104,13 +104,6 @@ gunicorn -w 4 -b 0.0.0.0:5000 app:app
 | `UPLOAD_FOLDER` | `static/audio` | Where generated audio is written |
 | `PORT`, `HOST` | `5000`, `0.0.0.0` | Where the development server listens |
 
-## Deployment
-
-The production build is a Docker image based on Ubuntu 22.04 that installs the aeneas toolchain,
-pins NumPy below 2.0, and starts gunicorn. `deploy.sh` builds it for `linux/amd64`, pushes it to
-Google Artifact Registry, and deploys it to Cloud Run. Both files are kept out of git because they
-carry project-specific values.
-
 ## Project structure
 
 - `app.py`: Flask application, routes, and the Text-to-Speech client
